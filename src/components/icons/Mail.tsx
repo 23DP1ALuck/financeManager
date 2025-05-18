@@ -3,23 +3,18 @@ import { SVGProps } from "react"
 const Mail = (props: SVGProps<SVGSVGElement>) => (
     <svg
         xmlns="http://www.w3.org/2000/svg"
-        width={16}
-        height={15}
         fill="none"
+        stroke="currentColor"
+        strokeWidth={1.5}
+        className="size-6"
+        viewBox="0 0 24 24"
         {...props}
     >
-        <g clipPath="url(#a)">
-            <path
-                fill="#000"
-                fillOpacity={0.8}
-                d="M12.375.625h-8.75A3.129 3.129 0 0 0 .5 3.75v7.5a3.129 3.129 0 0 0 3.125 3.125h8.75A3.129 3.129 0 0 0 15.5 11.25v-7.5A3.129 3.129 0 0 0 12.375.625Zm-8.75 1.25h8.75a1.875 1.875 0 0 1 1.738 1.18L9.326 7.84a1.88 1.88 0 0 1-2.652 0L1.887 3.054a1.875 1.875 0 0 1 1.738-1.18Zm8.75 11.25h-8.75A1.875 1.875 0 0 1 1.75 11.25V4.687l4.04 4.038a3.13 3.13 0 0 0 4.42 0l4.04-4.038v6.563a1.875 1.875 0 0 1-1.875 1.875Z"
-            />
-        </g>
-        <defs>
-            <clipPath id="a">
-                <path fill="#fff" d="M.5 0h15v15H.5z" />
-            </clipPath>
-        </defs>
+        <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"
+        />
     </svg>
 )
 export default Mail;

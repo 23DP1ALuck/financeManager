@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Header from "@/components/Header";
+import Overview from "@/components/Overview";
 
 export default function Home() {
   const sections : { section : string, sectionName : string, href : string}[] = [
@@ -9,6 +10,9 @@ export default function Home() {
     {"section" : "transactions", "sectionName" : "Transactions", href : "/transactions"},
   ]
   return (
-    <Header sections={sections}/>
+      <>
+        <Header sections={sections}/>
+        <Overview/>
+      </>
   );
 }
