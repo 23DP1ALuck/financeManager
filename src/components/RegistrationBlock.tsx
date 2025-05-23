@@ -2,6 +2,7 @@ import Facebook from "@/components/icons/Facebook";
 import Twitter from "@/components/icons/Twitter";
 import Google from "@/components/icons/Google";
 import OrBlock from "@/components/OrBlock";
+import Link from "next/link";
 
 type RegistrationProps = {
     inputs : {
@@ -39,14 +40,28 @@ const RegistrationBlock = ({inputs} : RegistrationProps) => {
               <div className="flex w-full items-center justify-center">
                   <div className="grid grid-cols-3 w-full gap-4 px-2">
                       <div className="flex justify-center">
-                          <div className="flex w-fit p-1 border border-black/20 rounded-xl px-10 hover:bg-black/5 duration-200 cursor-pointer"><Facebook
-                              className="text-black/80 duration-200 size-7 cursor-pointer"/></div>
+                          <div
+                              className="flex w-fit p-1 border border-black/20 rounded-xl px-10 hover:bg-black/5 duration-200 cursor-pointer">
+                              <Facebook
+                                  className="text-black/80 duration-200 size-7 cursor-pointer"/></div>
                       </div>
-                      <div className="flex justify-center"><div className="flex w-fit p-1 border border-black/20 rounded-xl px-10 hover:bg-black/5 duration-200 cursor-pointer"><Twitter className="text-black/80  duration-200 size-7 cursor-pointer"/></div></div>
-                      <div className="flex justify-center"><div className="flex w-fit p-1 border border-black/20 rounded-xl px-10 hover:bg-black/5 duration-200 cursor-pointer"><Google className="text-black/80 duration-200 size-7 cursor-pointer"/></div></div>
+                      <div className="flex justify-center">
+                          <div
+                              className="flex w-fit p-1 border border-black/20 rounded-xl px-10 hover:bg-black/5 duration-200 cursor-pointer">
+                              <Twitter className="text-black/80  duration-200 size-7 cursor-pointer"/></div>
+                      </div>
+                      <div className="flex justify-center">
+                          <div
+                              className="flex w-fit p-1 border border-black/20 rounded-xl px-10 hover:bg-black/5 duration-200 cursor-pointer">
+                              <Google className="text-black/80 duration-200 size-7 cursor-pointer"/></div>
+                      </div>
                   </div>
               </div>
+              <div className="flex w-full justify-center gap-2">
+                  <h1 className="text-black/70 text-sm">Already have an account?</h1>
+                  <Link className="text-black/80 text-sm underline" href="/auth/login">Sign in</Link>
               </div>
+          </div>
       </div>
     );
 }

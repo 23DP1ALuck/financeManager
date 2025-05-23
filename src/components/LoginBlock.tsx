@@ -1,7 +1,13 @@
+"use client"
+
 import Facebook from "@/components/icons/Facebook";
 import Twitter from "@/components/icons/Twitter";
 import Google from "@/components/icons/Google";
 import OrBlock from "@/components/OrBlock";
+import {signIn, useSession} from "next-auth/react";
+import {useEffect} from "react";
+import {useRouter} from "next/navigation";
+import Link from "next/link";
 
 type LoginProps = {
     inputs : {
@@ -43,8 +49,12 @@ const LoginBlock = ({inputs} : LoginProps) => {
                                 className="text-black/80 duration-200 size-7 cursor-pointer"/></div>
                         </div>
                         <div className="flex justify-center"><div className="flex w-fit p-1 border border-black/20 rounded-xl px-10 hover:bg-black/5 duration-200 cursor-pointer"><Twitter className="text-black/80  duration-200 size-7 cursor-pointer"/></div></div>
-                        <div className="flex justify-center"><div className="flex w-fit p-1 border border-black/20 rounded-xl px-10 hover:bg-black/5 duration-200 cursor-pointer"><Google className="text-black/80 duration-200 size-7 cursor-pointer"/></div></div>
+                        <div className="flex justify-center"><div className="flex w-fit p-1 border border-black/20 rounded-xl px-10 hover:bg-black/5 duration-200 cursor-pointer" onClick={() => signIn("google", {callbackUrl: "/overview"})}><Google className="text-black/80 duration-200 size-7 cursor-pointer" /></div></div>
                     </div>
+                </div>
+                <div className="flex w-full justify-center gap-2">
+                    <h1 className="text-black/70 text-sm">Don't have an account?</h1>
+                    <Link className="text-black/80 text-sm underline" href="/auth/registration">Sign up</Link>
                 </div>
             </div>
         </div>

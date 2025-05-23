@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@prisma/client": "^6.8.2",
     "@react-three/drei": "^10.0.8",
     "@react-three/fiber": "^9.1.2",
     "class-variance-authority": "^0.7.1",
@@ -16,6 +17,8 @@
     "lucide-react": "^0.511.0",
     "motion": "^12.12.1",
     "next": "15.3.2",
+    "next-auth": "^4.24.11",
+    "prisma": "^6.8.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-minimal-pie-chart": "^9.1.0",

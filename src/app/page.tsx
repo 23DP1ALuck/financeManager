@@ -11,8 +11,7 @@ export default function Home() {
   ]
   return (
       <>
-        <Header sections={sections}/>
-        <Overview/>
+        <h1>Finance manager</h1>
       </>
   );
 }

@@ -10,32 +10,13 @@ import BudgetBlock from "@/components/BudgetBlock";
 import BalanceBlock from "@/components/BalanceBlock";
 import LastTransactions from "@/components/LastTransactions";
 import {Component as CategoriesChart} from "@/components/CategoriesChart"
+import {SideBar} from "@/components/SideBar";
 
 const Overview = () => {
     return(
         <div className="flex w-full sm:px-7 px-1 bg-[#00FFFF04]">
             <div className="flex md:px-6.5 py-16 flex-col w-1/8 px-2 h-full w-fit">
-                <div className="flex flex-col py-1 px-1 w-fit bg-white rounded-3xl border-1 border-black/10">
-                    <div className="flex flex-col items-center gap-5">
-                        <div className="flex rounded-full text-white w-fit p-2 bg-black/80 duration-150">
-                            <Home/>
-                        </div>
-                        {/*hr*/}
-                        <div className="flex rounded-full w-3/4 h-0.5 bg-black/30"></div>
-                    </div>
-                    <div className="flex flex-col gap-12 pt-5">
-                        <div
-                            className="flex rounded-full cursor-pointer w-fit p-2 bg-[#00000010] duration-200 hover:bg-[#0000002b]">
-                            <Info/></div>
-                        <div
-                            className="flex rounded-full cursor-pointer w-fit p-2 bg-[#00000010] duration-200 hover:bg-[#0000002b]">
-                            <Settings/></div>
-                        <div
-                            className="flex rounded-full cursor-pointer w-fit p-2 bg-[#00000010] duration-200 hover:bg-red-500/80">
-                            <Logout/>
-                        </div>
-                    </div>
-                </div>
+                <SideBar/>
             </div>
             <div className="flex flex-col py-17 gap-7 px-2 md:px-3 w-full h-full">
                 <div className="flex flex-col gap-2 w-fit">

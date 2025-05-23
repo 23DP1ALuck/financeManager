@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model accounts {
+  account_number String         @id @db.VarChar(50)
+  bank_name      String         @db.VarChar(25)
+  user_id        Int?
+  users          users?         @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "accounts_ibfk_1")
+  transactions   transactions[]
+
+  @@index([user_id], map: "user_id")
+}
+
+model budgets {
+  budget_id    Int        @id @default(autoincrement())
+  budget_value Decimal?   @db.Decimal(7, 2)
+  category_id  Int
+  categories   categories @relation(fields: [category_id], references: [category_id], onDelete: NoAction, onUpdate: NoAction, map: "budgets_ibfk_1")
+
+  @@index([category_id], map: "category_id")
+}
+
+model categories {
+  category_id   Int            @id @default(autoincrement())
+  category_name String         @db.VarChar(50)
+  budgets       budgets[]
+  transactions  transactions[]
+}
+
+model transactions {
+  transaction_id          Int        @id @default(autoincrement())
+  transaction_name        String     @db.VarChar(30)
+  transaction_description String?    @db.VarChar(150)
+  transaction_sum         Decimal    @db.Decimal(7, 2)
+  transaction_date        DateTime   @db.Timestamp(0)
+  account_id              String     @db.VarChar(50)
+  category_id             Int
+  accounts                accounts   @relation(fields: [account_id], references: [account_number], onDelete: NoAction, onUpdate: NoAction, map: "transactions_ibfk_1")
+  categories              categories @relation(fields: [category_id], references: [category_id], onDelete: NoAction, onUpdate: NoAction, map: "transactions_ibfk_2")
+
+  @@index([account_id], map: "account_id")
+  @@index([category_id], map: "category_id")
+}
+
+model users {
+  user_id       Int        @id @default(autoincrement())
+  username      String     @unique(map: "username") @db.VarChar(25)
+  password      String     @db.VarChar(255)
+  email         String     @unique(map: "email") @db.VarChar(120)
+  date_of_birth DateTime   @db.Date
+  accounts      accounts[]
+}
