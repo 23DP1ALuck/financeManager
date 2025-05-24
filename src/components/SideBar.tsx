@@ -8,14 +8,6 @@ import {useRouter} from "next/navigation";
 import {useEffect} from "react";
 
 export const SideBar = () => {
-    const {data: session, status} = useSession();
-    const router = useRouter();
-    useEffect(() => {
-        if(status ===  "unauthenticated"){
-            router.push("/auth/login")
-        }
-        if (status === "loading") return null
-    },[status])
     return (
         <div className="flex flex-col py-1 px-1 w-fit bg-white rounded-3xl border-1 border-black/10">
             <div className="flex flex-col items-center gap-5">
