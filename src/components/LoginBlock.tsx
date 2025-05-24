@@ -45,7 +45,7 @@ const LoginBlock = ({inputs} : LoginProps) => {
                 <div className="flex w-full items-center justify-center">
                     <div className="grid grid-cols-3 w-full gap-4 px-2">
                         <div className="flex justify-center">
-                            <div className="flex w-fit p-1 border border-black/20 rounded-xl px-10 hover:bg-black/5 duration-200 cursor-pointer"><Facebook
+                            <div className="flex w-fit p-1 border border-black/20 rounded-xl px-10 hover:bg-black/5 duration-200 cursor-pointer" onClick={() => signIn("facebook", {callbackUrl: "/overview"})}><Facebook
                                 className="text-black/80 duration-200 size-7 cursor-pointer"/></div>
                         </div>
                         <div className="flex justify-center"><div className="flex w-fit p-1 border border-black/20 rounded-xl px-10 hover:bg-black/5 duration-200 cursor-pointer"><Twitter className="text-black/80  duration-200 size-7 cursor-pointer"/></div></div>
