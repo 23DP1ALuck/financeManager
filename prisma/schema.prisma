@@ -1,3 +1,9 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
@@ -8,52 +14,52 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model accounts {
-  account_number String         @id @db.VarChar(50)
-  bank_name      String         @db.VarChar(25)
-  user_id        Int?
-  users          users?         @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "accounts_ibfk_1")
-  transactions   transactions[]
+model users {
+  user_id       Int      @id @default(autoincrement())
+  username      String   @unique
+  email         String
+  password      String
+  date_of_birth DateTime
 
-  @@index([user_id], map: "user_id")
+  accounts     accounts[]
+  transactions transactions[]
 }
 
-model budgets {
-  budget_id    Int        @id @default(autoincrement())
-  budget_value Decimal?   @db.Decimal(7, 2)
-  category_id  Int
-  categories   categories @relation(fields: [category_id], references: [category_id], onDelete: NoAction, onUpdate: NoAction, map: "budgets_ibfk_1")
+model accounts {
+  account_id Int    @id @default(autoincrement())
+  name       String
+  balance    Float
+  user_id    Int
 
-  @@index([category_id], map: "category_id")
+  user         users          @relation(fields: [user_id], references: [user_id])
+  transactions transactions[]
 }
 
 model categories {
-  category_id   Int            @id @default(autoincrement())
-  category_name String         @db.VarChar(50)
-  budgets       budgets[]
-  transactions  transactions[]
+  category_id Int    @id @default(autoincrement())
+  name        String
+
+  budgets      budgets[]
+  transactions transactions[]
+}
+
+model budgets {
+  budget_id   Int   @id @default(autoincrement())
+  amount      Float
+  category_id Int
+
+  category categories @relation(fields: [category_id], references: [category_id])
 }
 
 model transactions {
-  transaction_id          Int        @id @default(autoincrement())
-  transaction_name        String     @db.VarChar(30)
-  transaction_description String?    @db.VarChar(150)
-  transaction_sum         Decimal    @db.Decimal(7, 2)
-  transaction_date        DateTime   @db.Timestamp(0)
-  account_id              String     @db.VarChar(50)
-  category_id             Int
-  accounts                accounts   @relation(fields: [account_id], references: [account_number], onDelete: NoAction, onUpdate: NoAction, map: "transactions_ibfk_1")
-  categories              categories @relation(fields: [category_id], references: [category_id], onDelete: NoAction, onUpdate: NoAction, map: "transactions_ibfk_2")
+  transaction_id Int      @id @default(autoincrement())
+  amount         Float
+  date           DateTime
+  account_id     Int
+  category_id    Int
+  user_id        Int
 
-  @@index([account_id], map: "account_id")
-  @@index([category_id], map: "category_id")
-}
-
-model users {
-  user_id       Int        @id @default(autoincrement())
-  username      String     @unique(map: "username") @db.VarChar(25)
-  password      String     @db.VarChar(255)
-  email         String     @unique(map: "email") @db.VarChar(120)
-  date_of_birth DateTime   @db.Date
-  accounts      accounts[]
+  account  accounts   @relation(fields: [account_id], references: [account_id])
+  category categories @relation(fields: [category_id], references: [category_id])
+  user     users      @relation(fields: [user_id], references: [user_id])
 }

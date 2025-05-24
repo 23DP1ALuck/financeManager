@@ -9,6 +9,7 @@ export default async function OverviewPage() {
     if(!session || !session.user){
         redirect("/auth/login")
     }
+    console.log(session.user);
     const sections : { section : string, sectionName : string, href : string}[] = [
         {"section" : "overview", "sectionName" : "Overview", "href" : "/"},
         {"section" : "wallets", "sectionName" : "Wallets", href : "/wallets"},
