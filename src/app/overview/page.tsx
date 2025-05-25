@@ -10,6 +10,11 @@ export default async function OverviewPage() {
         redirect("/auth/login")
     }
     console.log(session.user);
+    const userInfo : { name : string, email : string, image : string} = {
+        name: session.user?.name ?? "",
+        email: session.user?.email ?? "",
+        image: session.user?.image ?? ""
+    };
     const sections : { section : string, sectionName : string, href : string}[] = [
         {"section" : "overview", "sectionName" : "Overview", "href" : "/"},
         {"section" : "wallets", "sectionName" : "Wallets", href : "/wallets"},
@@ -19,7 +24,7 @@ export default async function OverviewPage() {
     return (
         <>
             <Header sections={sections}/>
-            <Overview/>
+            <Overview {...userInfo}/>
         </>
     );
 }

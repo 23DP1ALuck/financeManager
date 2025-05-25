@@ -12,16 +12,23 @@ import LastTransactions from "@/components/LastTransactions";
 import {Component as CategoriesChart} from "@/components/CategoriesChart"
 import {SideBar} from "@/components/SideBar";
 
-const Overview = () => {
-    return(
+type UserInfo = {
+    name: string,
+    email: string,
+    image: string,
+}
+
+const Overview = (userInfo: UserInfo) => {
+    return (
         <div className="flex w-full sm:px-7 px-1 bg-[#00FFFF04]">
             <div className="flex md:px-6.5 py-16 flex-col w-1/8 px-2 h-full w-fit">
                 <SideBar/>
             </div>
             <div className="flex flex-col py-17 gap-7 px-2 md:px-3 w-full h-full">
                 <div className="flex flex-col gap-2 w-fit">
-                    <h1 className="text-xl md:text-3xl font-semibold text-black">Welcome back, Artjoms!</h1>
-                    <p className="text-black/50 font-medium text-xs md:text-sm">Here you can check your monthly overview report</p>
+                    <h1 className="text-xl md:text-3xl font-semibold text-black">Welcome back, {userInfo.name}</h1>
+                    <p className="text-black/50 font-medium text-xs md:text-sm">Here you can check your monthly overview
+                        report</p>
                 </div>
                 <div className="flex flex-col md:flex-row gap-5 w-full">
                     <div className="flex gap-3 w-full md:w-1/2">

@@ -3,6 +3,10 @@ import Twitter from "@/components/icons/Twitter";
 import Google from "@/components/icons/Google";
 import OrBlock from "@/components/OrBlock";
 import Link from "next/link";
+import {signUp} from "@/app/utils/signUp";
+import React from "react";
+import {redirect} from "next/navigation";
+import {getServerSession} from "next-auth";
 
 type RegistrationProps = {
     inputs : {
@@ -14,7 +18,11 @@ type RegistrationProps = {
     }[]
 };
 
-const RegistrationBlock = ({inputs} : RegistrationProps) => {
+const  RegistrationBlock = async ({inputs} : RegistrationProps) => {
+    const session = await getServerSession();
+    if(session){
+        redirect("/overview")
+    }
     return(
       <div className="flex items-center flex-col gap-3 max-w-100 p-4 bg-white rounded-3xl border border-white/20">
           <div className="flex flex-col">
@@ -22,7 +30,14 @@ const RegistrationBlock = ({inputs} : RegistrationProps) => {
               <p className="text-sm text-black/70">Let's get started. Fill in the details below to create your account.</p>
           </div>
           <div className="flex flex-col w-full gap-3">
-              <form className="flex flex-col gap-3">
+              <form className="flex flex-col gap-3"
+              action={async (formData : FormData) => {
+                  "use server";
+                  const res = await signUp(formData);
+                  if(res.success){
+                      redirect("/auth/login")
+                  }
+              }}>
                   {inputs.map(({label, forLabel, name, type, placeholder}) => (
                       <div key={label} className="flex flex-col w-full rounded-xl">
                           <label htmlFor={forLabel} className="text-black text-sm font-semibold p-1">{label}</label>

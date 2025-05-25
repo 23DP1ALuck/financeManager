@@ -1,12 +1,10 @@
 "use client"
 
-import Facebook from "@/components/icons/Facebook";
 import Twitter from "@/components/icons/Twitter";
 import Google from "@/components/icons/Google";
 import OrBlock from "@/components/OrBlock";
 import {signIn, useSession} from "next-auth/react";
-import {useEffect} from "react";
-import {useRouter} from "next/navigation";
+import React, {useEffect} from "react";
 import Link from "next/link";
 import Github from "@/components/icons/Github";
 
@@ -20,7 +18,22 @@ type LoginProps = {
     }[]
 };
 
+
 const LoginBlock = ({inputs} : LoginProps) => {
+    const handleSubmit =  async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+        const credentials = {
+            email : formData.get("email"),
+            username : formData.get("username"),
+            password : formData.get("password")
+        }
+        await signIn("credentials", {
+            ...credentials,
+            callbackUrl: "/overview"
+        })
+    }
+
     return(
         <div className="flex items-center flex-col gap-3 max-w-100 p-4 bg-white rounded-3xl border border-white/20">
             <div className="flex flex-col w-full">
@@ -28,7 +41,7 @@ const LoginBlock = ({inputs} : LoginProps) => {
                 <p className="text-sm text-black/70">Fill in the details below to login to your account.</p>
             </div>
             <div className="flex flex-col w-full gap-3">
-                <form className="flex flex-col gap-3">
+                <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
                     {inputs.map(({label, forLabel, name, type, placeholder}) => (
                         <div key={label} className="flex flex-col w-full rounded-xl">
                             <label htmlFor={forLabel} className="text-black text-sm font-semibold p-1">{label}</label>
