@@ -2,7 +2,7 @@ import GoogleProvider from "next-auth/providers/google";
 import GithubProvider from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import {NextAuthOptions, type User} from "next-auth";
+import {NextAuthOptions, Session, type User} from "next-auth";
 import {prisma} from "./db"
 
 declare module "next-auth" {
@@ -79,7 +79,7 @@ export const authOptions : NextAuthOptions = {
 
     ],
     callbacks: {
-        async jwt({token, account}) {
+        async jwt({token, account, user}) {
             if (account) {
                 token.provider = account.provider;
                 token.id = account.id;
@@ -102,20 +102,38 @@ export const authOptions : NextAuthOptions = {
                         });
                         token.user_id = newUser.user_id;
                     } else{
+                        console.log("test");
                         token.user_id = existingUser.user_id;
                     }
                 } else {
                     token.credentials = true;
                 }
             }
-            return token;
+            const data = {
+                ...token,
+                ...user
+            }
+            return {
+                user_id: data.user_id ?? 0,
+                name: data.name ?? undefined,
+                email: data.email ?? undefined,
+                image: data.image ?? undefined,
+            };
         },
         async session({ session, token }) {
-            if (session?.user) {
-                session.user.id = token.user_id ?? 0;
+            if(token && token.user_id){
+                return {
+                    ...session,
+                    user: {
+                        id: Number(token.user_id ?? 0),
+                        name: session.user.name ?? undefined,
+                        email: session.user.email ?? undefined,
+                        image: session.user.image ?? undefined,
+                    }
+                }satisfies Session;
             }
             return session;
-        },
+        }
 
     },
     session:{

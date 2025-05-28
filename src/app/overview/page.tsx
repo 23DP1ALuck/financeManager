@@ -5,16 +5,18 @@ import {getServerSession} from "next-auth";
 import {redirect} from "next/navigation";
 import {getLastFourTransactions} from "@/lib/utils/getLastFourTransactions";
 import { getToken } from "next-auth/jwt"
+import {authOptions} from "@/lib/utils/authOptions";
 
 
 
 export default async function OverviewPage() {
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
     if(!session || !session.user){
         redirect("/auth/login")
     }
-    console.log(session.user);
-    const userInfo : { name : string, email : string, image : string} = {
+    console.log(session);
+    const userInfo : { user_id: number,name : string, email : string, image : string} = {
+        user_id: session.user?.id ?? "",
         name: session.user?.name ?? "",
         email: session.user?.email ?? "",
         image: session.user?.image ?? ""

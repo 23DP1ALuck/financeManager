@@ -1,18 +1,32 @@
-"use client";
-import {useEffect} from "react";
-const fetchData = async () => {
-    const res = await fetch("http://localhost:3000/api/last-four");
-    return await res.json();
-};
-const LastTransactions =  () => {
-    useEffect(() => {
-        fetchData().then((res) => {
-            console.log(res);
-        }).catch((err) => {
-            console.log(err);
-        }
-        )
-    },[])
+import {prisma} from "@/lib/utils/db";
+import {getServerSession} from "next-auth";
+import {authOptions} from "@/lib/utils/authOptions";
+
+const getTransactions  = async () => {
+    const session = await getServerSession(authOptions);
+    return (
+        prisma.transactions.findMany({
+            where: {user_id: session?.user.id},
+            take: 4,
+            select: {
+                transaction_id: true,
+                amount: true,
+                date: true,
+                category: {
+                    select: {
+                        name: true
+                    }
+                }
+            },
+            orderBy: {
+                date: 'desc'
+            }
+        })
+    );
+}
+const LastTransactions =  async () => {
+    const transactions = await getTransactions();
+    console.log(transactions);
     return(
         <div className="flex w-full h-full">
             <div className="flex flex-col px-4 py-7 gap-7 w-full h-auto bg-black/5 rounded-2xl border-1 border-black/10">
@@ -20,41 +34,16 @@ const LastTransactions =  () => {
                     <h1 className="font-bold text-black/90 text-2xl">Last 4 transactions</h1>
                 </div>
                 <div className="flex flex-col gap-5">
-                    <div style={{ willChange: 'transform' }}
-                        className="flex h-15 items-center rounded-2xl p-2 bg-white/10 border-1 border-black/12 justify-between ease-in-out hover:scale-102 duration-300 will-change: transform;">
-                        <h1 className="text-black/90 font-semibold">1st May</h1>
-                        <div className="flex rounded-full w-0.5 h-3 bg-black/30"></div>
-                        <h1 className="text-black/90 font-semibold">Spotify</h1>
-                        <div className="flex rounded-full w-0.5 h-3 bg-black/30"></div>
-                        <h1 className="text-black/90 font-semibold">-6.99$</h1>
-                    </div>
-                    <div
-                        style={{ willChange: 'transform' }}
-                        className="flex h-15 items-center rounded-2xl p-2 bg-white/10 border-1 border-black/12 justify-between hover:scale-102 duration-300 will-change: transform;">
-                        <h1 className="text-black/90 font-semibold">1st May</h1>
-                        <div className="flex rounded-full w-0.5 h-3 bg-black/30"></div>
-                        <h1 className="text-black/90 font-semibold">Spotify</h1>
-                        <div className="flex rounded-full w-0.5 h-3 bg-black/30"></div>
-                        <h1 className="text-black/90 font-semibold">-6.99$</h1>
-                    </div>
-                    <div
-                        style={{ willChange: 'transform' }}
-                        className="flex h-15 items-center rounded-2xl p-2 bg-white/10 border-1 border-black/12 justify-between hover:scale-102 duration-300 will-change: transform;">
-                        <h1 className="text-black/90 font-semibold">1st May</h1>
-                        <div className="flex rounded-full w-0.5 h-3 bg-black/30"></div>
-                        <h1 className="text-black/90 font-semibold">Spotify</h1>
-                        <div className="flex rounded-full w-0.5 h-3 bg-black/30"></div>
-                        <h1 className="text-black/90 font-semibold">-6.99$</h1>
-                    </div>
-                    <div
-                        style={{ willChange: 'transform' }}
-                        className="flex h-15 items-center rounded-2xl p-2 bg-white/10 border-1 border-black/12 justify-between hover:scale-102 duration-300 will-change: transform;">
-                        <h1 className="text-black/90 font-semibold">1st May</h1>
-                        <div className="flex rounded-full w-0.5 h-3 bg-black/30"></div>
-                        <h1 className="text-black/90 font-semibold">Spotify</h1>
-                        <div className="flex rounded-full w-0.5 h-3 bg-black/30"></div>
-                        <h1 className="text-black/90 font-semibold">-6.99$</h1>
-                    </div>
+                    {transactions.map(({transaction_id,amount, date, category}) => (
+                        <div key={transaction_id} style={{ willChange: 'transform' }}
+                             className="flex h-15 items-center rounded-2xl p-2 bg-white/10 border-1 border-black/12 justify-between ease-in-out hover:scale-102 duration-300 will-change: transform;">
+                            <h1 className="text-black/90 font-semibold">{date.toDateString()}</h1>
+                            <div className="flex rounded-full w-0.5 h-3 bg-black/30"></div>
+                            <h1 className="text-black/90 font-semibold">{category.name}</h1>
+                            <div className="flex rounded-full w-0.5 h-3 bg-black/30"></div>
+                            <h1 className="text-black/90 font-semibold">{amount}$</h1>
+                        </div>
+                    ))}
                 </div>
 
             </div>
