@@ -41,7 +41,7 @@ CREATE TABLE `budgets` (
 CREATE TABLE `transactions` (
     `transaction_id` INTEGER NOT NULL AUTO_INCREMENT,
     `amount` DOUBLE NOT NULL,
-    `date` DATETIME(3) NOT NULL,
+    `date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `account_id` INTEGER NOT NULL,
     `category_id` INTEGER NOT NULL,
     `user_id` INTEGER NOT NULL,

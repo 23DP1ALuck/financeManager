@@ -137,7 +137,7 @@ export const authOptions : NextAuthOptions = {
                         id: Number(token.user_id ?? 0),
                         name: session.user.name ?? undefined,
                         email: session.user.email ?? undefined,
-                        image: session.user.image ?? undefined,
+                        image: (token.picture ?? token.image) as string ?? undefined,
                     }
                 }satisfies Session;
             }
