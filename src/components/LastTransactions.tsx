@@ -36,11 +36,17 @@ const LastTransactions =  async () => {
                     {transactions.length > 0 ? transactions.map(({transaction_id,amount, date, category}) => (
                         <div key={transaction_id} style={{ willChange: 'transform' }}
                              className="flex h-15 items-center rounded-2xl p-2 bg-white/10 border-1 border-black/12 justify-between ease-in-out hover:scale-102 duration-300 will-change: transform;">
-                            <h1 className="text-black/90 font-semibold">{date.toDateString()}</h1>
-                            <div className="flex rounded-full w-0.5 h-3 bg-black/30"></div>
-                            <h1 className="text-black/90 font-semibold">{category.name}</h1>
-                            <div className="flex rounded-full w-0.5 h-3 bg-black/30"></div>
-                            <h1 className="text-black/90 font-semibold">{amount}$</h1>
+                            <div className="flex w-1/3 justify-between items-center">
+                                <h1 className="text-black/90 font-semibold">{date.toDateString()}</h1>
+                                <div className="flex rounded-full w-0.5 h-3 bg-black/30"></div>
+                            </div>
+                            <div className="flex w-1/3 justify-center items-center">
+                                <h1 className="text-black/90 font-semibold">{category.name}</h1>
+                            </div>
+                            <div className="flex w-1/3 justify-between items-center">
+                                <div className="flex rounded-full w-0.5 h-3 bg-black/30"></div>
+                                <h1 className="text-black/90 font-semibold">{amount}$</h1>
+                            </div>
                         </div>
                     )) : <div className="flex justify-center items-center text-center w-full h-full">
                             <h1 className="text-3xl text-black/75">No transactions yet</h1>
