@@ -52,7 +52,7 @@ export const authOptions : NextAuthOptions = {
                 }
 
                 const {email, username, password} = credentials;
-
+                console.log(credentials);
                 if (!password || (!email && !username)) {
                     throw new Error("Missing required fields");
                 }
@@ -72,7 +72,7 @@ export const authOptions : NextAuthOptions = {
                 return {
                     id: String(user.user_id),
                     name: user.username ?? undefined,
-                    email: user.email ?? undefined,
+                    email: user.email ?? undefined
                 } as User;
             }
         })
@@ -106,12 +106,21 @@ export const authOptions : NextAuthOptions = {
                         token.user_id = existingUser.user_id;
                     }
                 } else {
-                    token.credentials = true;
+                    const credentialsExistingUser = await prisma.users.findFirst({
+                        where: {
+                            AND: [
+                                {email: token.email ?? undefined},
+                                {NOT: {password: "oauthPas"}}
+                            ]
+                        },
+                    })
+                    token.user_id  = credentialsExistingUser?.user_id;
                 }
             }
             const data = {
                 ...token,
-                ...user
+                ...user,
+                ...account
             }
             return {
                 user_id: data.user_id ?? 0,

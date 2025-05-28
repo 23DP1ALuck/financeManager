@@ -24,7 +24,7 @@ const LoginBlock = ({inputs} : LoginProps) => {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
         const credentials = {
-            email : formData.get("email"),
+            email : formData.get("username"),
             username : formData.get("username"),
             password : formData.get("password")
         }

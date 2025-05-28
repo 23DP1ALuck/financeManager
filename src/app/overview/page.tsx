@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Header from "@/components/Header";
 import Overview from "@/components/Overview";
-import {getServerSession} from "next-auth";
+import { getServerSession } from "next-auth/next";
 import {redirect} from "next/navigation";
 import {getLastFourTransactions} from "@/lib/utils/getLastFourTransactions";
 import { getToken } from "next-auth/jwt"
