@@ -1,4 +1,18 @@
-const LastTransactions = () => {
+"use client";
+import {useEffect} from "react";
+const fetchData = async () => {
+    const res = await fetch("http://localhost:3000/api/last-four");
+    return await res.json();
+};
+const LastTransactions =  () => {
+    useEffect(() => {
+        fetchData().then((res) => {
+            console.log(res);
+        }).catch((err) => {
+            console.log(err);
+        }
+        )
+    },[])
     return(
         <div className="flex w-full h-full">
             <div className="flex flex-col px-4 py-7 gap-7 w-full h-auto bg-black/5 rounded-2xl border-1 border-black/10">

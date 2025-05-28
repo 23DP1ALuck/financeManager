@@ -3,7 +3,7 @@ import Twitter from "@/components/icons/Twitter";
 import Google from "@/components/icons/Google";
 import OrBlock from "@/components/OrBlock";
 import Link from "next/link";
-import {signUp} from "@/app/utils/signUp";
+import {signUp} from "@/lib/utils/signUp";
 import React from "react";
 import {redirect} from "next/navigation";
 import {getServerSession} from "next-auth";

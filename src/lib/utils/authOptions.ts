@@ -3,10 +3,29 @@ import GithubProvider from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import {NextAuthOptions, type User} from "next-auth";
-import { type Account } from "next-auth";
-import { type Session} from "next-auth";
 import {prisma} from "./db"
-import {JWT} from "next-auth/jwt";
+
+declare module "next-auth" {
+    interface Session {
+            user: {
+                id: number;
+                name?: string | null;
+                email?: string | null;
+                image?: string | null;
+            };
+        }
+
+    interface User {
+        id: string;
+    }
+}
+
+declare module "next-auth/jwt" {
+    interface JWT {
+        user_id?: number;
+    }
+}
+
 
 export const authOptions : NextAuthOptions = {
     providers: [
@@ -63,6 +82,7 @@ export const authOptions : NextAuthOptions = {
         async jwt({token, account}) {
             if (account) {
                 token.provider = account.provider;
+                token.id = account.id;
                 // if account provider is not credentials, find first match in db
                 if (account.provider !== "credentials") {
                     const existingUser = await prisma.users.findFirst({
@@ -72,7 +92,7 @@ export const authOptions : NextAuthOptions = {
                     });
                     // if no esisting user create new user in db
                     if (!existingUser) {
-                        await prisma.users.create({
+                        const newUser = await prisma.users.create({
                             data: {
                                 email: token.email!,
                                 username: token.name ?? "Unnamed",
@@ -80,6 +100,9 @@ export const authOptions : NextAuthOptions = {
                                 date_of_birth: new Date(),
                             }
                         });
+                        token.user_id = newUser.user_id;
+                    } else{
+                        token.user_id = existingUser.user_id;
                     }
                 } else {
                     token.credentials = true;
@@ -87,6 +110,16 @@ export const authOptions : NextAuthOptions = {
             }
             return token;
         },
+        async session({ session, token }) {
+            if (session?.user) {
+                session.user.id = token.user_id ?? 0;
+            }
+            return session;
+        },
+
+    },
+    session:{
+        strategy: "jwt"
     },
     pages: {
         signIn: "/auth/login",
