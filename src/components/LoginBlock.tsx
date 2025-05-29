@@ -21,9 +21,11 @@ type LoginProps = {
 
 
 const LoginBlock = ({inputs} : LoginProps) => {
-
+    // state which stores objects with problematic fields
     const [fieldErrors, setFieldErrors] = useState<{ [key: string]: boolean }>({});
+    // error texts
     const [errorMessage, setErrorMessageText] = useState<string | null>(null);
+
     const handleSubmit =  async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
@@ -32,9 +34,12 @@ const LoginBlock = ({inputs} : LoginProps) => {
             username : formData.get("username")?.toString().trim() || "",
             password : formData.get("password")?.toString().trim() || ""
         }
+        // initialize error object for problematic inputs
         const errors: { [key: string]: boolean } = {};
+        // if one of them is missed, add property to object
         if (!credentials.username) errors.username = true;
         if (!credentials.password) errors.password = true;
+        // changing state for displaying it
         if(Object.keys(errors).length > 0){
             setFieldErrors(errors);
             setErrorMessageText("Missing field");
@@ -80,6 +85,7 @@ const LoginBlock = ({inputs} : LoginProps) => {
                                     className="w-full h-full p-2.5 bg-transparent focus:outline-none focus:ring-0 focus:shadow-none placeholder:text-black/70 font-medium text-black/90 text-xs"
                                     placeholder={placeholder} type={type} id={name} name={name}/>
                                 <div className="absolute right-2 bottom-2">
+                                    {/*display errors input errors*/}
                                     <AnimatePresence>
                                         {(fieldErrors[name] && errorMessage === "Missing field") && (
                                             <motion.div
@@ -121,6 +127,7 @@ const LoginBlock = ({inputs} : LoginProps) => {
             </div>
         </div>
             <div className="flex flex-col h-5">
+                {/*display invalid credentials error*/}
                 <AnimatePresence>
                     {errorMessage === "No such user!" && (
                         <motion.div
