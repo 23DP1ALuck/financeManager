@@ -7,3 +7,9 @@ export const INPUTS_LOGIN : {label: string, forLabel: string, name: string, type
     {"label" : "Username", "forLabel" : "username", "name" : "username", "type": "text", "placeholder": "Username :"},
     {"label" : "Password", "forLabel" : "password", "name" : "password", "type": "password", "placeholder": "Password :"},
 ]
+export const sections : { section : string, sectionName : string, href : string}[] = [
+    {"section" : "overview", "sectionName" : "Overview", "href" : "/overview"},
+    {"section" : "wallets", "sectionName" : "Wallets", "href" : "/wallets"},
+    {"section" : "budgets", "sectionName" : "Budgets", "href" : "/budgets"},
+    {"section" : "transactions", "sectionName" : "Transactions", "href" : "/transactions"},
+]

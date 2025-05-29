@@ -1,12 +1,13 @@
 "use client"
-
 import Twitter from "@/components/icons/Twitter";
 import Google from "@/components/icons/Google";
 import OrBlock from "@/components/OrBlock";
-import {signIn, useSession} from "next-auth/react";
-import React, {useEffect} from "react";
+import {signIn, SignInResponse} from "next-auth/react";
+import React, {useEffect, useState} from "react";
 import Link from "next/link";
 import Github from "@/components/icons/Github";
+import {redirect} from "next/navigation";
+import {AnimatePresence, motion} from "motion/react"
 
 type LoginProps = {
     inputs : {
@@ -20,22 +21,48 @@ type LoginProps = {
 
 
 const LoginBlock = ({inputs} : LoginProps) => {
+
+    const [fieldErrors, setFieldErrors] = useState<{ [key: string]: boolean }>({});
+    const [errorMessage, setErrorMessageText] = useState<string | null>(null);
     const handleSubmit =  async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
         const credentials = {
-            email : formData.get("username"),
-            username : formData.get("username"),
-            password : formData.get("password")
+            email : formData.get("username")?.toString().trim() || "",
+            username : formData.get("username")?.toString().trim() || "",
+            password : formData.get("password")?.toString().trim() || ""
         }
-        await signIn("credentials", {
-            ...credentials,
-            callbackUrl: "/overview"
-        })
+        const errors: { [key: string]: boolean } = {};
+        if (!credentials.username) errors.username = true;
+        if (!credentials.password) errors.password = true;
+        if(Object.keys(errors).length > 0){
+            setFieldErrors(errors);
+            setErrorMessageText("Missing field");
+            setTimeout(() => {
+                setFieldErrors({});
+            },2000)
+            return;
+        }
+        signIn("credentials", { ...credentials, redirect: false })
+            .then((result : SignInResponse | undefined)=> {
+                if (!result) {
+                    return;
+                }
+                const { error, status, ok } : {error: string | null, status: number, ok: boolean} = result;
+                if(ok){
+                    redirect("/overview")
+                }else{
+                    setErrorMessageText("No such user!")
+                    setTimeout(() => {
+                        setErrorMessageText("");
+                    },2000)
+                }
+            })
     }
 
     return(
-        <div className="flex items-center flex-col gap-3 max-w-100 p-4 bg-white rounded-3xl border border-white/20">
+        <div className="flex items-center flex-col gap-3 max-w-100 rounded-3xl border border-white/20">
+            <div className="flex items-center flex-col gap-3 max-w-100  p-4 bg-white rounded-3xl border border-white/20">
             <div className="flex flex-col w-full">
                 <h1 className="font-bold text-2xl text-black">Login to your account</h1>
                 <p className="text-sm text-black/70">Fill in the details below to login to your account.</p>
@@ -44,10 +71,31 @@ const LoginBlock = ({inputs} : LoginProps) => {
                 <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
                     {inputs.map(({label, forLabel, name, type, placeholder}) => (
                         <div key={label} className="flex flex-col w-full rounded-xl">
-                            <label htmlFor={forLabel} className="text-black text-sm font-semibold p-1">{label}</label>
-                            <input
-                                className="w-full bg-transparent focus:outline-none focus:ring-0 focus:shadow-none focus:border placeholder:text-black/70 font-medium text-black/90 text-xs p-2 border border-black/20 rounded "
-                                placeholder={placeholder} type={type} id={name} name={name}/>
+                            <div className="flex gap-1 items-center">
+                                <label htmlFor={forLabel} className="text-black text-sm font-semibold p-1 flex">{label}</label>
+                            </div>
+                            <div
+                                className="w-full relative bg-transparent focus:outline-none focus:ring-0 focus:shadow-none focus:border border border-black/20 rounded ">
+                                <input
+                                    className="w-full h-full p-2.5 bg-transparent focus:outline-none focus:ring-0 focus:shadow-none placeholder:text-black/70 font-medium text-black/90 text-xs"
+                                    placeholder={placeholder} type={type} id={name} name={name}/>
+                                <div className="absolute right-2 bottom-2">
+                                    <AnimatePresence>
+                                        {(fieldErrors[name] && errorMessage === "Missing field") && (
+                                            <motion.div
+                                                key={`error-${name}`}
+                                                initial={{opacity: 0,}}
+                                                animate={{opacity: 1}}
+                                                exit={{opacity: 0}}
+                                                className="text-red-600/50 text-sm font-medium text-center"
+                                            >
+                                                Missing field
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
+                            </div>
+
                         </div>
                     ))}
                     <button type="submit"
@@ -70,6 +118,22 @@ const LoginBlock = ({inputs} : LoginProps) => {
                     <h1 className="text-black/70 text-sm">Don't have an account?</h1>
                     <Link className="text-black/80 text-sm underline" href="/auth/registration">Sign up</Link>
                 </div>
+            </div>
+        </div>
+            <div className="flex flex-col h-5">
+                <AnimatePresence>
+                    {errorMessage === "No such user!" && (
+                        <motion.div
+                            key="error-message"
+                            initial={{ opacity: 0,}}
+                            animate={{ opacity: 1}}
+                            exit={{ opacity: 0}}
+                            className="text-red-600 text-sm font-medium text-center"
+                        >
+                            {errorMessage}
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
         </div>
     );
