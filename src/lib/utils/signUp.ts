@@ -1,4 +1,3 @@
-import React from "react";
 import schema from "./schema";
 import {prisma} from "./db";
 import bcrypt from "bcryptjs";

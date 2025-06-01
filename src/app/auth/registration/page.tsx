@@ -8,7 +8,7 @@ export default function Registration(){
             <div className="w-fit h-auto">
                 <LogoForAuth/>
             </div>
-            <div className="w-fit h-auto border border-black/10 rounded-3xl">
+            <div className="w-fit h-auto">
                 <RegistrationBlock inputs={INPUTS_REGISTRATION}/>
             </div>
         </main>
