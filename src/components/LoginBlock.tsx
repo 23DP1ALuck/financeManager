@@ -6,8 +6,9 @@ import {signIn, SignInResponse} from "next-auth/react";
 import React, {useEffect, useState} from "react";
 import Link from "next/link";
 import Github from "@/components/icons/Github";
-import {redirect} from "next/navigation";
+import {redirect, useRouter} from "next/navigation";
 import {AnimatePresence, motion} from "motion/react"
+import {Router} from "next/router";
 
 type LoginProps = {
     inputs : {
@@ -25,6 +26,8 @@ const LoginBlock = ({inputs} : LoginProps) => {
     const [fieldErrors, setFieldErrors] = useState<{ [key: string]: boolean }>({});
     // error texts
     const [errorMessage, setErrorMessageText] = useState<string | null>(null);
+    // for redirect purposes
+    const router = useRouter();
 
     const handleSubmit =  async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -55,7 +58,7 @@ const LoginBlock = ({inputs} : LoginProps) => {
                 }
                 const { error, status, ok } : {error: string | null, status: number, ok: boolean} = result;
                 if(ok){
-                    redirect("/overview")
+                    router.push("/overview");
                 }else{
                     setErrorMessageText("No such user!")
                     setTimeout(() => {
@@ -80,9 +83,9 @@ const LoginBlock = ({inputs} : LoginProps) => {
                                 <label htmlFor={forLabel} className="text-black text-sm font-semibold p-1 flex">{label}</label>
                             </div>
                             <div
-                                className="w-full relative bg-transparent focus:outline-none focus:ring-0 focus:shadow-none focus:border border border-black/20 rounded ">
+                                className={`w-full relative bg-transparent focus:outline-none focus:ring-0 focus:shadow-none focus:border border border-black/20 rounded ${fieldErrors[name] && "border-red-600/50"}`}>
                                 <input
-                                    className="w-full h-full p-2.5 bg-transparent focus:outline-none focus:ring-0 focus:shadow-none placeholder:text-black/70 font-medium text-black/90 text-xs"
+                                    className={`w-full h-full p-2.5 bg-transparent focus:outline-none focus:ring-0 focus:shadow-none placeholder:text-black/70 font-medium text-black/90 text-xs ${fieldErrors[name] && "border-red-600/50"}`}
                                     placeholder={placeholder} type={type} id={name} name={name}/>
                                 <div className="absolute right-2 bottom-2">
                                     {/*display errors input errors*/}
@@ -111,13 +114,12 @@ const LoginBlock = ({inputs} : LoginProps) => {
                 </form>
                 <OrBlock/>
                 <div className="flex w-full items-center justify-center">
-                    <div className="grid grid-cols-3 w-full gap-4 px-2">
-                        <div className="flex justify-center">
-                            <div className="flex w-fit p-1 border border-black/20 rounded-xl px-10 hover:bg-black/5 duration-200 cursor-pointer" onClick={() => signIn("github", {callbackUrl: "/overview"})}><Github
+                    <div className="flex justify-center w-full gap-1">
+                        <div className="flex justify-center w-1/2">
+                            <div className="flex w-full justify-center p-1 border border-black/20 rounded-xl hover:bg-black/5 duration-200 cursor-pointer" onClick={() => signIn("github", {callbackUrl: "/overview"})}><Github
                                 className="text-black/80 size-7 cursor-pointer"/></div>
                         </div>
-                        <div className="flex justify-center"><div className="flex w-fit p-1 border border-black/20 rounded-xl px-10 hover:bg-black/5 duration-200 cursor-pointer"><Twitter className="text-black/80  duration-200 size-7 cursor-pointer"/></div></div>
-                        <div className="flex justify-center"><div className="flex w-fit p-1 border border-black/20 rounded-xl px-10 hover:bg-black/5 duration-200 cursor-pointer" onClick={() => signIn("google", {callbackUrl: "/overview"})}><Google className="text-black/80 duration-200 size-7 cursor-pointer" /></div></div>
+                        <div className="flex justify-center w-1/2"><div className="flex w-full justify-center p-1 border border-black/20 rounded-xl hover:bg-black/5 duration-200 cursor-pointer" onClick={() => signIn("google", {callbackUrl: "/overview"})}><Google className="text-black/80 duration-200 size-7 cursor-pointer" /></div></div>
                     </div>
                 </div>
                 <div className="flex w-full justify-center gap-2">
