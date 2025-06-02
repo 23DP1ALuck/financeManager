@@ -3,6 +3,7 @@ import Header from "@/components/Header";
 import {getServerSession} from "next-auth/next";
 import {authOptions} from "@/lib/utils/authOptions";
 import {redirect} from "next/navigation";
+import WalletsMain from "@/components/WalletsMain";
 
 export default async function Wallets() {
     const session = await getServerSession(authOptions);
@@ -12,6 +13,7 @@ export default async function Wallets() {
     return(
         <>
             <Header sections={sections}/>
+            <WalletsMain/>
         </>
     )
 }

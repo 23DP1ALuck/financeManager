@@ -1,11 +1,8 @@
 "use client"
-import Facebook from "@/components/icons/Facebook";
-import Twitter from "@/components/icons/Twitter";
 import Google from "@/components/icons/Google";
 import OrBlock from "@/components/OrBlock";
 import Link from "next/link";
-import {signUp} from "@/lib/utils/signUp";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
 import {signIn, useSession} from "next-auth/react";
 import {AnimatePresence, motion} from "motion/react";
@@ -25,9 +22,12 @@ const  RegistrationBlock = ({inputs} : RegistrationProps) => {
     // if session already exists redirect user to overview
     const session = useSession();
     const router = useRouter();
-    if (session.status === "authenticated") {
-        router.push("/overview");
-    }
+    useEffect(() => {
+        if (session.status === "authenticated") {
+            router.push("/overview");
+        }
+    },[router, session.status]);
+    
 
     const [fieldErrors, setFieldErrors] = useState<{[key: string]: boolean}>({});
     const [errorMessage, setErrorMessageText] = useState<string | null>(null);
