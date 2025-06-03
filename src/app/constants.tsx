@@ -1,3 +1,5 @@
+import {boolean} from "zod";
+
 export const INPUTS_REGISTRATION : {label: string, forLabel: string, name: string, type: string, placeholder: string}[] = [
     {"label" : "Username", "forLabel" : "username", "name" : "username", "type": "text", "placeholder": "Username :"},
     {"label" : "Password", "forLabel" : "password", "name" : "password", "type": "password", "placeholder": "Password :"},

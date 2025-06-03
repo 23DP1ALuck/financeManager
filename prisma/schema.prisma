@@ -14,6 +14,24 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum WALLETS {
+  Swedbank
+  Seb
+  Citadele
+  Revolut
+  Wise
+  Cash
+  Other
+}
+enum CATEGORY_NAME {
+  Food
+  Entertainment
+  Subscribtions
+  Transport
+  Education
+  Other
+}
+
 model users {
   user_id       Int      @id @default(autoincrement())
   username      String   @unique
@@ -27,9 +45,10 @@ model users {
 
 model accounts {
   account_id Int    @id @default(autoincrement())
-  name       String
+  name       WALLETS
   balance    Float
   user_id    Int
+  isPrimary Boolean @default(false)
 
   user         users          @relation(fields: [user_id], references: [user_id])
   transactions transactions[]
@@ -37,7 +56,7 @@ model accounts {
 
 model categories {
   category_id Int    @id @default(autoincrement())
-  name        String
+  name        CATEGORY_NAME
 
   budgets      budgets[]
   transactions transactions[]
