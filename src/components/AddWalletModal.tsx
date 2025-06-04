@@ -5,17 +5,35 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import Image from "next/image";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
-import React, {useState} from "react";
+import React, {Dispatch, SetStateAction, useEffect, useState} from "react";
 import {z} from "zod";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-
-import { Dispatch, SetStateAction } from "react";
+import {Checkbox} from "@/components/ui/checkbox";
+import {Wallet} from "@/lib/types";
 
 type OnSuccessProp = Dispatch<SetStateAction<boolean>>;
 
+const getWallets = async () => {
+    const res = await fetch("/api/wallets");
+    return await res.json();
+}
+
 const AddWalletModal = ({onSuccess} : {onSuccess : OnSuccessProp}) => {
+    const [isAlreadyPrimary, setIsAlreadyPrimary] = useState<boolean>(false);
     const [open, setOpen] = useState(false);
+    console.log(isAlreadyPrimary);
+
+    useEffect(() => {
+        const checkForPrimary = async () => {
+            const wallets = await getWallets();
+            const primaryWallet = wallets.find((wallet : Wallet) => wallet.isPrimary);
+            if (primaryWallet) setIsAlreadyPrimary(true);
+            return wallets;
+        }
+        checkForPrimary();
+    },[open])
+
     const formSchema = z.object({
         balance: z.number().min(0, {
             message: "Balance must be greater than 0",
@@ -23,12 +41,14 @@ const AddWalletModal = ({onSuccess} : {onSuccess : OnSuccessProp}) => {
         walletType: z.string().nonempty({
             message: "Wallet type is required",
         }),
+        isPrimary: z.boolean()
     })
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             walletType: "Other",
-            balance: "" as unknown as number
+            balance: "" as unknown as number,
+            isPrimary: false
         },
     })
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -37,9 +57,10 @@ const AddWalletModal = ({onSuccess} : {onSuccess : OnSuccessProp}) => {
                 method: "POST",
                 body: JSON.stringify(values)
             })
-            const result = await res.json()
+            const result = await res.json();
             console.log(result);
-            onSuccess(prev=>!prev)
+            onSuccess(prev=>!prev);
+            if (result.success) form.reset();
         }catch (e) {
             console.log(e)
             return
@@ -134,6 +155,24 @@ const AddWalletModal = ({onSuccess} : {onSuccess : OnSuccessProp}) => {
                                 </FormItem>
                             )}
                         />
+                        <FormField control={form.control}  name={"isPrimary"} render={({field}) => (
+                            <FormItem>
+                                <FormLabel>Is this wallet your primary wallet?</FormLabel>
+                                <FormControl>
+                                    <Checkbox
+                                        disabled={isAlreadyPrimary}
+                                        checked={field.value}
+                                        onCheckedChange={field.onChange}
+                                    />
+                                </FormControl>
+                                <FormMessage/>
+                                {isAlreadyPrimary && (
+                                    <FormMessage className="text-red-600">
+                                        You can't set this wallet as primary, because you already have a primary wallet.
+                                    </FormMessage>
+                                )}
+                            </FormItem>
+                            )}/>
                         <Button type="submit">Submit</Button>
                     </form>
                 </Form>

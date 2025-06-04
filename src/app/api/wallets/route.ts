@@ -37,7 +37,7 @@ export async function POST(req : NextRequest) {
                 user_id: token.user_id!,
                 name: data.walletType,
                 balance: data.balance,
-                isPrimary: data.isPrimary ?? false
+                isPrimary: data.isPrimary
             }
         })
         console.log(token.user_id);
