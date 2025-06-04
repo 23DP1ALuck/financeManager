@@ -1,9 +1,5 @@
-"use client"
-import Logo from "@/components/icons/Logo";
 import LogoForAuth from "@/components/icons/LogoForAuth";
-import RegistrationBlock from "@/components/RegistrationBlock";
 import LoginBlock from "@/components/LoginBlock";
-import {useEffect} from "react";
 import {INPUTS_LOGIN} from "@/app/constants";
 
 export default function Login(){

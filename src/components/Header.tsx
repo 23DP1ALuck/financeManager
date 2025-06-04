@@ -1,5 +1,4 @@
 "use client"
-import Container from "./Container";
 import Logo from "@/components/icons/Logo";
 import Link from "next/link";
 import { usePathname } from 'next/navigation'
@@ -18,8 +17,6 @@ type HeaderProps = {
 
 const Header = ({sections} : HeaderProps) => {
     const pathname = usePathname();
-    console.log(pathname);
-    console.log(pathname === "/overview");
     return (
         <div className="flex justify-between w-full sm:px-7 px-2 py-1 bg-[#00FFFF04]">
             <div>

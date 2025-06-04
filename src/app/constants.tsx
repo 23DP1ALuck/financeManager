@@ -1,4 +1,5 @@
 import {boolean} from "zod";
+import {WALLETS} from "@/generated/prisma";
 
 export const INPUTS_REGISTRATION : {label: string, forLabel: string, name: string, type: string, placeholder: string}[] = [
     {"label" : "Username", "forLabel" : "username", "name" : "username", "type": "text", "placeholder": "Username :"},

@@ -5,7 +5,7 @@ import Overview from "@/components/Overview";
 export default function Home() {
   const sections : { section : string, sectionName : string, href : string}[] = [
     {"section" : "overview", "sectionName" : "Overview", "href" : "/"},
-    {"section" : "wallets", "sectionName" : "Wallets", href : "/wallets"},
+    {"section" : "wallets", "sectionName" : "WalletsList", href : "/wallets"},
     {"section" : "budgets", "sectionName" : "Budgets", href : "/budgets"},
     {"section" : "transactions", "sectionName" : "Transactions", href : "/transactions"},
   ]
