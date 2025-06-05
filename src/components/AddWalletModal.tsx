@@ -22,7 +22,6 @@ const getWallets = async () => {
 const AddWalletModal = ({onSuccess} : {onSuccess : OnSuccessProp}) => {
     const [isAlreadyPrimary, setIsAlreadyPrimary] = useState<boolean>(false);
     const [open, setOpen] = useState(false);
-    console.log(isAlreadyPrimary);
 
     useEffect(() => {
         const checkForPrimary = async () => {

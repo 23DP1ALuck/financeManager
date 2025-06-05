@@ -1,14 +1,25 @@
 "use client"
 import {Wallet} from "@/lib/types";
-import {useState} from "react";
+import {Dispatch, SetStateAction, useEffect, useState} from "react";
 
 type WalletProps = {
-    wallets: Wallet[]
+    wallets: Wallet[],
+    selectedWalletAction: Dispatch<SetStateAction<Wallet | undefined | null>>
 }
 
 
-export const WalletsList =  ({wallets}: WalletProps) => {
-    const [selectedWallet, setSelectedWallet] = useState<Wallet | null>(null);
+export const WalletsList =  ({wallets, selectedWalletAction}: WalletProps) => {
+    const [selectedWallet, setSelectedWallet] = useState<Wallet | null>();
+    // by default select primary wallet
+    useEffect(() => {
+        const primaryWallet = wallets.find(wallet => wallet.isPrimary);
+        setSelectedWallet(primaryWallet);
+    }, [wallets]);
+    useEffect(() => {
+        selectedWalletAction(selectedWallet);
+        console.log("first",selectedWallet);
+    }, [selectedWallet, selectedWalletAction]);
+
     return (
         <div className="flex flex-col w-full gap-5">
             {wallets.length === 0 ? <div className="flex w-full h-full items-center justify-center">
