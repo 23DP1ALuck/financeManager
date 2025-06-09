@@ -50,12 +50,12 @@ model transactions {
   transaction_id          Int        @id @default(autoincrement())
   amount                  Float
   date                    DateTime   @default(now())
-  account_id              Int
+  account_id              Int?
   category_id             Int
   user_id                 Int
   transaction_description String
   transaction_name        String
-  account                 accounts   @relation(fields: [account_id], references: [account_id])
+  account                 accounts?  @relation(fields: [account_id], references: [account_id], onDelete: SetNull)
   category                categories @relation(fields: [category_id], references: [category_id])
   user                    users      @relation(fields: [user_id], references: [user_id])
 

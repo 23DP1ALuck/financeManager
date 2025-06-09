@@ -8,7 +8,9 @@ const WalletsMain = async () => {
             <div className="flex md:px-6.5 py-16 flex-col px-2 h-full w-fit">
                 <SideBar/>
             </div>
-            <WalletsLeftAndRight/>
+            <div className="flex flex-col py-5 h-full w-full">
+                <WalletsLeftAndRight/>
+            </div>
         </div>
     )
 }

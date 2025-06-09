@@ -23,7 +23,7 @@ const DeleteButton = () => {
             <Dialog>
                 <form>
                     <DialogTrigger asChild>
-                        <Button variant="destructive" size="lg" className="flex items-center gap-2">
+                        <Button variant="destructive" size="lg" className="flex items-center gap-2 cursor-pointer">
                             <Trash2 size={16} /> Delete Wallet
                         </Button>
                     </DialogTrigger>
