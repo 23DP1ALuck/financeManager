@@ -26,7 +26,7 @@ const WalletsListAndAddContainer = ({showWalletInfo} : {showWalletInfo : selecte
     }, [wallets, showSelectedWalletInfo, showWalletInfo]);
 
     return(
-        <div className="flex flex-col gap-3 w-full h-full">
+        <div className="flex flex-col gap-3 w-full bg-black/5 p-6 rounded-xl gap-5 border-1 border-black/10">
             <div className="flex w-full justify-between h-fit">
                 <h1 className="text-2xl font-bold text-black/80">Wallets</h1>
                 <AddWalletModal onSuccess={setOnSuccess}/>
