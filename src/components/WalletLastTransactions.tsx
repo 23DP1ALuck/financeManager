@@ -9,6 +9,7 @@ type WalletLastTransactionsProps = {
 }
 
 const WalletLastTransactions =   ({selectedWallet} : WalletLastTransactionsProps) => {
+    // TODO : responsive
     const [isLoading, setIsLoading] = useState<boolean>(false);
     useEffect(() => {
         console.log("Last", selectedWallet);
@@ -46,10 +47,10 @@ const WalletLastTransactions =   ({selectedWallet} : WalletLastTransactionsProps
                 <div className="w-full">
                     <h1 className="font-bold text-black/90 text-2xl">Transactions</h1>
                 </div>
-                <div className="flex flex-col h-full gap-5">
+                <div className="flex flex-col h-full gap-5 max-h-[calc(400px-100px)] overflow-y-auto scrollbar-thumb-sky-700 scrollbar-custom">
                     {isLoading ? <Loading/> : (transactions.length > 0 ? transactions.map(({transaction_id,amount, date, category}) => (
                         <div key={transaction_id} style={{ willChange: 'transform' }}
-                             className="flex h-15 items-center rounded-2xl p-2 bg-white/10 border-1 border-black/12 justify-between ease-in-out hover:scale-102 duration-300 will-change: transform;">
+                             className="flex h-15 items-center rounded-2xl p-2 bg-white/10 border-1 border-black/12 justify-between">
                             <div className="flex w-1/3 justify-between items-center">
                                 <h1 className="text-black/90 font-semibold">{new Date(date).toDateString()}</h1>
                                 <div className="flex rounded-full w-0.5 h-3 bg-black/30"></div>

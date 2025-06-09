@@ -9,6 +9,7 @@ type WalletProps = {
 
 
 export const WalletsList =  ({wallets, selectedWalletAction}: WalletProps) => {
+    // TODO : responsive
     const [selectedWallet, setSelectedWallet] = useState<Wallet | null>();
     // by default select primary wallet
     useEffect(() => {

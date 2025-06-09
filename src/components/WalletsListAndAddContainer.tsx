@@ -9,6 +9,7 @@ import {fetchWallets} from "@/lib/utils/fetchWallets";
 type selectedWalletAction = Dispatch<SetStateAction<Wallet|null|undefined>>
 
 const WalletsListAndAddContainer = ({showWalletInfo} : {showWalletInfo : selectedWalletAction}) => {
+    // TODO : responsive
     const [onSuccess, setOnSuccess] = useState<boolean>(false);
     const [wallets, setWallets] = useState<Wallet[]>([]);
     const [showSelectedWalletInfo, setShowSelectedWalletInfo] = useState<Wallet|undefined|null>();
