@@ -1,6 +1,7 @@
 "use client"
 import {Transactions, Wallet} from "@/lib/types";
 import {useEffect, useState} from "react";
+import Loading from "@/components/Loading";
 
 
 type WalletLastTransactionsProps = {
@@ -8,30 +9,37 @@ type WalletLastTransactionsProps = {
 }
 
 const WalletLastTransactions =   ({selectedWallet} : WalletLastTransactionsProps) => {
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     useEffect(() => {
         console.log("Last", selectedWallet);
     }, [selectedWallet]);
     const [transactions, setTransactions] = useState<Transactions[]>([])
     // const transactions =
     useEffect(() => {
-        const fetchTransactions = async () => {
-            const response = await fetch(`/api/transactions/?walletId=${selectedWallet?.account_id}`, {
-                method: "GET",
-            });
-            const result = await response.json();
-            setTransactions(result.data);
-            console.log("in Effect result data set",result.data);
-        }
-        
         if (selectedWallet?.account_id) {
-            fetchTransactions();
-            console.log("fetching")
-            console.log(transactions);
+            setIsLoading(true);
+            const controller = new AbortController();
+            const signal = controller.signal;
+            fetch(`/api/transactions/?walletId=${selectedWallet?.account_id}`, {
+                method: "GET",
+                signal: signal,
+            }).then((res) => res.json()).then((res) => setTransactions(res.data))
+                .catch(err => {
+                    if (err.name === "AbortError"){
+                        console.log("Cancelled", err.message);
+                    }else{
+                        console.error("Undefined error occurred")
+                    }
+                }).finally(() => setIsLoading(false));
+            return () => {
+                controller.abort();
+            }
         }
     }, [selectedWallet]);
     useEffect(() => {
         console.log("transactions updated:", transactions);
     }, [transactions]);
+
     return(
         <div className="flex w-full h-auto">
             <div className="flex flex-col px-4 py-7 gap-7 w-full h-auto bg-black/5 rounded-2xl border-1 border-black/10">
@@ -39,7 +47,7 @@ const WalletLastTransactions =   ({selectedWallet} : WalletLastTransactionsProps
                     <h1 className="font-bold text-black/90 text-2xl">Transactions</h1>
                 </div>
                 <div className="flex flex-col h-full gap-5">
-                    {transactions.length > 0 ? transactions.map(({transaction_id,amount, date, category}) => (
+                    {isLoading ? <Loading/> : (transactions.length > 0 ? transactions.map(({transaction_id,amount, date, category}) => (
                         <div key={transaction_id} style={{ willChange: 'transform' }}
                              className="flex h-15 items-center rounded-2xl p-2 bg-white/10 border-1 border-black/12 justify-between ease-in-out hover:scale-102 duration-300 will-change: transform;">
                             <div className="flex w-1/3 justify-between items-center">
@@ -56,9 +64,8 @@ const WalletLastTransactions =   ({selectedWallet} : WalletLastTransactionsProps
                         </div>
                     )) : <div className="flex justify-center items-center text-center w-full h-full">
                         <h1 className="text-3xl text-black/75">No transactions yet</h1>
-                    </div>}
+                    </div>)}
                 </div>
-
             </div>
         </div>
     );
