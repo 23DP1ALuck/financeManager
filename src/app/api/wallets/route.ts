@@ -60,7 +60,7 @@ export async function DELETE(req : NextRequest) {
     }
     const data = await req.json();
     try{
-        if(data.removeTransactions){
+        if(data.deleteTransactions){
             await prisma.transactions.deleteMany({
                 where: {
                     AND:[

@@ -6,9 +6,13 @@ import {Wallet} from "@/lib/types";
 import {fetchWallets} from "@/lib/utils/fetchWallets";
 
 
-type selectedWalletAction = Dispatch<SetStateAction<Wallet|null|undefined>>
+type SelectedWalletAction = {
+    deleteTrigger: boolean,
+    selectedWalletAction: Dispatch<SetStateAction<Wallet | undefined | null>>
+}
 
-const WalletsListAndAddContainer = ({showWalletInfo} : {showWalletInfo : selectedWalletAction}) => {
+
+const WalletsListAndAddContainer = ({selectedWalletAction, deleteTrigger} : SelectedWalletAction) => {
     // TODO : responsive
     const [onSuccess, setOnSuccess] = useState<boolean>(false);
     const [wallets, setWallets] = useState<Wallet[]>([]);
@@ -18,12 +22,11 @@ const WalletsListAndAddContainer = ({showWalletInfo} : {showWalletInfo : selecte
             return await fetchWallets();
         }
         getWallets().then(res => setWallets(res))
-    }, [onSuccess]);
+    }, [onSuccess, deleteTrigger]);
     useEffect(() => {
-
-        showWalletInfo(showSelectedWalletInfo)
+        selectedWalletAction(showSelectedWalletInfo)
         console.log("second",showSelectedWalletInfo)
-    }, [wallets, showSelectedWalletInfo, showWalletInfo]);
+    }, [wallets, showSelectedWalletInfo, selectedWalletAction]);
 
     return(
         <div className="flex flex-col gap-3 w-full bg-black/5 p-6 rounded-xl gap-5 border-1 border-black/10">
