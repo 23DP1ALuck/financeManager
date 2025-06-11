@@ -1,14 +1,12 @@
 "use client"
-import Twitter from "@/components/icons/Twitter";
 import Google from "@/components/icons/Google";
-import OrBlock from "@/components/OrBlock";
+import OrBlock from "@/components/authBlocks/OrBlock";
 import {signIn, SignInResponse} from "next-auth/react";
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import Link from "next/link";
 import Github from "@/components/icons/Github";
-import {redirect, useRouter} from "next/navigation";
+import {useRouter} from "next/navigation";
 import {AnimatePresence, motion} from "motion/react"
-import {Router} from "next/router";
 
 type LoginProps = {
     inputs : {
@@ -39,7 +37,7 @@ const LoginBlock = ({inputs} : LoginProps) => {
         }
         // initialize error object for problematic inputs
         const errors: { [key: string]: boolean } = {};
-        // if one of them is missed, add property to object
+        // if one of them is missed, add property to obj
         if (!credentials.username) errors.username = true;
         if (!credentials.password) errors.password = true;
         // changing state for displaying it

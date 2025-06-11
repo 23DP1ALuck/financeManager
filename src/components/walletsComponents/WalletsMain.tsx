@@ -1,5 +1,5 @@
 import {SideBar} from "@/components/SideBar";
-import WalletsLeftAndRight from "@/components/WalletsLeftAndRight";
+import WalletsLeftAndRight from "@/components/walletsComponents/WalletsLeftAndRight";
 
 const WalletsMain = async () => {
     // TODO : responsive

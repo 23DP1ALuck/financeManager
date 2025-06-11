@@ -1,7 +1,7 @@
 "use client"
 import React, {Dispatch, SetStateAction, useEffect, useRef, useState} from "react";
-import AddWalletModal from "@/components/AddWalletModal";
-import {WalletsList} from "@/components/WalletsList";
+import AddWalletModal from "@/components/walletsComponents/AddWalletModal";
+import {WalletsList} from "@/components/walletsComponents/WalletsList";
 import {Wallet} from "@/lib/types";
 import {fetchWallets} from "@/lib/utils/fetchWallets";
 

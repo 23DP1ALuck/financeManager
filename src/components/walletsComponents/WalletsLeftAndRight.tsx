@@ -1,12 +1,12 @@
 "use client"
-import WalletsListAndAddContainer from "@/components/WalletsListAndAddContainer";
+import WalletsListAndAddContainer from "@/components/walletsComponents/WalletsListAndAddContainer";
 import {useEffect, useState} from "react";
 import {Wallet} from "@/lib/types";
-import WalletLastTransactions from "@/components/WalletLastTransactions";
-import DeleteButton from "@/components/DeleteButton";
-import TransactionsMothsChart from "@/components/TransactionsMothsChart";
-import LastTransactions from "@/components/LastTransactions";
-import {Component as CategoriesChart} from "@/components/CategoriesChart";
+import WalletLastTransactions from "@/components/walletsComponents/WalletLastTransactions";
+import DeleteButton from "@/components/walletsComponents/DeleteButton";
+import TransactionsMothsChart from "@/components/walletsComponents/TransactionsMothsChart";
+import LastTransactions from "@/components/overviewComponents/LastTransactions";
+import {Component as CategoriesChart} from "@/components/overviewComponents/CategoriesChart";
 
 
 const WalletsLeftAndRight = () => {

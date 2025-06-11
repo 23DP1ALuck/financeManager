@@ -1,6 +1,6 @@
 "use client"
 import Google from "@/components/icons/Google";
-import OrBlock from "@/components/OrBlock";
+import OrBlock from "@/components/authBlocks/OrBlock";
 import Link from "next/link";
 import React, {useEffect, useState} from "react";
 import {useRouter} from "next/navigation";

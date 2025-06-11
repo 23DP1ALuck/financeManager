@@ -3,7 +3,7 @@ import Header from "@/components/Header";
 import {getServerSession} from "next-auth/next";
 import {authOptions} from "@/lib/utils/authOptions";
 import {redirect} from "next/navigation";
-import WalletsMain from "@/components/WalletsMain";
+import WalletsMain from "@/components/walletsComponents/WalletsMain";
 import {prisma} from "@/lib/utils/db";
 import {Session} from "next-auth";
 import {Wallet} from "@/lib/types";

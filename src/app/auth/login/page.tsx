@@ -1,5 +1,5 @@
 import LogoForAuth from "@/components/icons/LogoForAuth";
-import LoginBlock from "@/components/LoginBlock";
+import LoginBlock from "@/components/authBlocks/LoginBlock";
 import {INPUTS_LOGIN} from "@/app/constants";
 import {getServerSession} from "next-auth/next";
 import {authOptions} from "@/lib/utils/authOptions";

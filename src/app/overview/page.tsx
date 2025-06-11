@@ -1,5 +1,5 @@
 import Header from "@/components/Header";
-import Overview from "@/components/Overview";
+import Overview from "@/components/overviewComponents/Overview";
 import { getServerSession } from "next-auth/next";
 import {redirect} from "next/navigation";
 import {authOptions} from "@/lib/utils/authOptions";

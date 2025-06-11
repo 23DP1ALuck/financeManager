@@ -1,8 +1,8 @@
-import IncomeExpensesBlock from "@/components/IncomeExpensesBlock";
-import BudgetBlock from "@/components/BudgetBlock";
-import BalanceBlock from "@/components/BalanceBlock";
-import LastTransactions from "@/components/LastTransactions";
-import {Component as CategoriesChart} from "@/components/CategoriesChart"
+import IncomeExpensesBlock from "@/components/overviewComponents/IncomeExpensesBlock";
+import BudgetBlock from "@/components/overviewComponents/BudgetBlock";
+import BalanceBlock from "@/components/overviewComponents/BalanceBlock";
+import LastTransactions from "@/components/overviewComponents/LastTransactions";
+import {Component as CategoriesChart} from "@/components/overviewComponents/CategoriesChart"
 import {SideBar} from "@/components/SideBar";
 
 type UserInfo = {
