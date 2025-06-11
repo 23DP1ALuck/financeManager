@@ -42,7 +42,7 @@ const WalletLastTransactions =   ({selectedWallet} : WalletLastTransactionsProps
     }, [transactions]);
 
     return(
-        <div className="flex w-full h-auto">
+        <div className="flex w-full h-full">
             <div className="flex flex-col px-4 py-7 gap-7 w-full h-auto bg-black/5 rounded-2xl border-1 border-black/10">
                 <div className="w-full">
                     <h1 className="font-bold text-black/90 text-2xl">Transactions</h1>

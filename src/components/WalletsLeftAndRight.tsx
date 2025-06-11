@@ -4,6 +4,9 @@ import {useEffect, useState} from "react";
 import {Wallet} from "@/lib/types";
 import WalletLastTransactions from "@/components/WalletLastTransactions";
 import DeleteButton from "@/components/DeleteButton";
+import TransactionsMothsChart from "@/components/TransactionsMothsChart";
+import LastTransactions from "@/components/LastTransactions";
+import {Component as CategoriesChart} from "@/components/CategoriesChart";
 
 
 const WalletsLeftAndRight = () => {
@@ -23,9 +26,19 @@ const WalletsLeftAndRight = () => {
                 <WalletsListAndAddContainer selectedWalletAction={setSelectedWalletInformation} deleteTrigger={deleteTrigger}/>
                 <DeleteButton wallet={selectedWalletInformation} handleDeleteSuccess={handleDeleteSuccess}/>
             </div>
-            <div className="flex w-1/2 h-auto max-h-[400px]">
-                <WalletLastTransactions selectedWallet={selectedWalletInformation}/>
+            <div className="flex flex-row md:flex-col w-1/2 gap-5">
+                <div className="flex w-full h-1/2">
+                    <WalletLastTransactions selectedWallet={selectedWalletInformation}/>
+                </div>
             </div>
+            {/*<div className="flex flex-col w-1/2 gap-3 h-full">*/}
+            {/*    <div className="flex flex-col max-h-1/2 h-full">*/}
+            {/*        <WalletLastTransactions selectedWallet={selectedWalletInformation}/>*/}
+            {/*    </div>*/}
+            {/*    <div className="flex flex-col max-h-1/2 h-full">*/}
+            {/*        <TransactionsMothsChart/>*/}
+            {/*    </div>*/}
+            {/*</div>*/}
         </div>
     );
 }

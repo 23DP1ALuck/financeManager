@@ -19,16 +19,6 @@ type RegistrationProps = {
 };
 
 const  RegistrationBlock = ({inputs} : RegistrationProps) => {
-    // if session already exists redirect user to overview
-    const session = useSession();
-    const router = useRouter();
-    useEffect(() => {
-        if (session.status === "authenticated") {
-            router.push("/overview");
-        }
-    },[router, session.status]);
-    
-
     const [fieldErrors, setFieldErrors] = useState<{[key: string]: boolean}>({});
     const [errorMessage, setErrorMessageText] = useState<string | null>(null);
 
