@@ -31,14 +31,6 @@ const WalletsLeftAndRight = () => {
                     <WalletLastTransactions selectedWallet={selectedWalletInformation}/>
                 </div>
             </div>
-            {/*<div className="flex flex-col w-1/2 gap-3 h-full">*/}
-            {/*    <div className="flex flex-col max-h-1/2 h-full">*/}
-            {/*        <WalletLastTransactions selectedWallet={selectedWalletInformation}/>*/}
-            {/*    </div>*/}
-            {/*    <div className="flex flex-col max-h-1/2 h-full">*/}
-            {/*        <TransactionsMothsChart/>*/}
-            {/*    </div>*/}
-            {/*</div>*/}
         </div>
     );
 }

@@ -14,12 +14,23 @@ export const WalletsList =  ({wallets, selectedWalletAction}: WalletProps) => {
     // by default select primary wallet
     useEffect(() => {
         const primaryWallet = wallets.find(wallet => wallet.isPrimary);
+        if(primaryWallet) appendFirstWalletPrimaryToBegin(wallets);
         setSelectedWallet(primaryWallet);
     }, [wallets]);
     useEffect(() => {
         selectedWalletAction(selectedWallet);
         console.log("first",selectedWallet);
     }, [selectedWallet, selectedWalletAction]);
+    // function for move primary wallet to the begin of the list
+    const appendFirstWalletPrimaryToBegin = (wallets: Wallet[]) => {
+        for (let i = 0; i < wallets.length; i++) {
+            if (wallets[i].isPrimary) {
+                wallets.unshift(wallets[i]);
+                wallets.splice(i+1 , 1);
+                break;
+            }
+        }
+    }
 
     return (
         <div className="flex flex-col w-full gap-5">

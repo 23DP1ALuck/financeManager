@@ -29,12 +29,12 @@ const WalletsListAndAddContainer = ({selectedWalletAction, deleteTrigger} : Sele
     }, [wallets, showSelectedWalletInfo, selectedWalletAction]);
 
     return(
-        <div className="flex flex-col gap-3 w-full bg-black/5 p-6 rounded-xl gap-5 border-1 border-black/10">
+        <div className="flex flex-col gap-3 w-full bg-black/5 p-6 rounded-xl gap-5 border-1 border-black/10 h-1/2">
             <div className="flex w-full justify-between h-fit">
                 <h1 className="text-2xl font-bold text-black/80">Wallets</h1>
                 <AddWalletModal onSuccess={setOnSuccess}/>
             </div>
-            <div className="flex w-full h-full">
+            <div className="flex w-full h-full overflow-y-auto scrollbar-custom">
                 <WalletsList wallets={wallets} selectedWalletAction={setShowSelectedWalletInfo}/>
             </div>
         </div>
