@@ -21,7 +21,7 @@ const WalletLastTransactions =   ({selectedWallet} : WalletLastTransactionsProps
             setIsLoading(true);
             const controller = new AbortController();
             const signal = controller.signal;
-            fetch(`/api/transactions/?walletId=${selectedWallet?.account_id}`, {
+            fetch(`/api/transactions/wallets/?walletId=${selectedWallet?.account_id}`, {
                 method: "GET",
                 signal: signal,
             }).then((res) => res.json()).then((res) => setTransactions(res.data))

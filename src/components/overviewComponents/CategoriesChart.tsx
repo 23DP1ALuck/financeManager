@@ -1,31 +1,21 @@
 "use client"
 
 import * as React from "react"
-import { TrendingUp } from "lucide-react"
-import { Label, Pie, PieChart } from "recharts"
+import {TrendingUp} from "lucide-react"
+import {Label, Pie, PieChart} from "recharts"
 
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card"
-import {
-    ChartConfig,
-    ChartContainer,
-    ChartTooltip,
-    ChartTooltipContent,
-} from "@/components/ui/chart"
-import {now} from "d3-timer";
-const chartData = [
-    { category: "food", money: 300, fill: "#111" },
-    { category: "transport", money: 200, fill: "#333" },
-    { category: "entertainment", money: 150, fill: "#555" },
-    { category: "subscriptions", money: 100, fill: "#777" },
-    { category: "other", money: 80, fill: "#999" },
-]
+import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle,} from "@/components/ui/card"
+import {ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent,} from "@/components/ui/chart"
+import {useEffect, useState} from "react";
+
+
+// type for category spendings
+type CategoriesSpendingWithName = {
+    categoryId: number,
+    name: string,
+    category_spent : number,
+    fill: string
+}
 
 const chartConfig = {
     visitors: {
@@ -53,24 +43,65 @@ const chartConfig = {
     },
 } satisfies ChartConfig
 
+// pie chart colors
+const CHART_COLORS = [
+    "#111",
+    "#222",
+    "#333",
+    "#444",
+    "#555",
+    "#666",
+    "#777"
+];
+
 export function Component() {
+    // set categoryInformation
+    const [categoriesSpendings, setCategoriesSpendings] = useState<CategoriesSpendingWithName[]>()
+    // calculate month data
     const monthNames : string[] = [
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
     ]
+
     const currentDate : Date = new Date;
     const currentMonthNumber : number = currentDate.getMonth();
 
     const currentMonthName : string = monthNames[currentMonthNumber];
     const nextMonthName : string = monthNames[currentMonthNumber + 1];
+    // fetch data with category-based spendings and set it to categoriesSpendings
+    useEffect(() => {
+        fetch("/api/transactions/categories")
+            .then((res) => res.json())
+            .then((res) => setCategoriesSpendings(res.fullCategorySpendingsLastMonth))
+            .catch(err => console.error("Fetch error:", err));;
+    }, []);
 
+
+    // go through array with category spendings data and assing pie color to each element
+    const mapped : CategoriesSpendingWithName[] | undefined  = categoriesSpendings?.map((item, index) => {
+        return {
+            categoryId: item.categoryId,
+            name: item.name,
+            category_spent: item.category_spent,
+            fill: CHART_COLORS[index % CHART_COLORS.length],
+        };
+    });
+    // final chart data
+    const chartData = mapped?.map((item) => {
+        return {
+            category: item.name,
+            money: item.category_spent,
+            fill: item.fill
+        }
+    })
+    console.log(chartData);
     const totalVisitors = React.useMemo(() => {
-        return chartData.reduce((acc, curr) => acc + curr.money, 0)
-    }, [])
+        return chartData?.reduce((acc, curr) => acc + curr.money, 0)
+    }, [chartData])
     console.log(totalVisitors)
 
     return (
-        <Card className="flex flex-col">
+        <Card className="flex flex-col border border-black/10">
             <CardHeader className="items-center pb-0">
                 <CardTitle>Your spending by category</CardTitle>
                 <CardDescription>{currentMonthName} {currentDate.getFullYear()} - {nextMonthName} {currentDate.getFullYear()}</CardDescription>
@@ -107,7 +138,7 @@ export function Component() {
                                                     y={viewBox.cy}
                                                     className="fill-foreground text-3xl font-bold"
                                                 >
-                                                    {totalVisitors.toLocaleString()}
+                                                    {totalVisitors?.toLocaleString()}
                                                 </tspan>
                                                 <tspan
                                                     x={viewBox.cx}
