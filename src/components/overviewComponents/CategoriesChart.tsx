@@ -7,6 +7,7 @@ import {Label, Pie, PieChart} from "recharts"
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle,} from "@/components/ui/card"
 import {ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent,} from "@/components/ui/chart"
 import {useEffect, useState} from "react";
+import moment, {Moment} from "moment";
 
 
 // type for category spendings
@@ -57,27 +58,21 @@ const CHART_COLORS = [
 export function Component() {
     // set categoryInformation
     const [categoriesSpendings, setCategoriesSpendings] = useState<CategoriesSpendingWithName[]>()
+
     // calculate month data
-    const monthNames : string[] = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
-    ]
+    const currentDate : Moment = moment();
+    const nextMonth : Moment = moment().clone().add(1, 'months');
+    const formatted = `${currentDate.format('MMM YYYY')} - ${nextMonth.format('MMM YYYY')}`;
 
-    const currentDate : Date = new Date;
-    const currentMonthNumber : number = currentDate.getMonth();
-
-    const currentMonthName : string = monthNames[currentMonthNumber];
-    const nextMonthName : string = monthNames[currentMonthNumber + 1];
-    // fetch data with category-based spendings and set it to categoriesSpendings
     useEffect(() => {
         fetch("/api/transactions/categories")
             .then((res) => res.json())
             .then((res) => setCategoriesSpendings(res.fullCategorySpendingsLastMonth))
-            .catch(err => console.error("Fetch error:", err));;
+            .catch(err => console.error("Fetch error:", err));
     }, []);
 
 
-    // go through array with category spendings data and assing pie color to each element
+    // go through array with category spendings data and assign pie color to each element
     const mapped : CategoriesSpendingWithName[] | undefined  = categoriesSpendings?.map((item, index) => {
         return {
             categoryId: item.categoryId,
@@ -104,7 +99,7 @@ export function Component() {
         <Card className="flex flex-col border border-black/10">
             <CardHeader className="items-center pb-0">
                 <CardTitle>Your spending by category</CardTitle>
-                <CardDescription>{currentMonthName} {currentDate.getFullYear()} - {nextMonthName} {currentDate.getFullYear()}</CardDescription>
+                <CardDescription>{formatted}</CardDescription>
             </CardHeader>
             <CardContent className="flex-1 pb-0">
                 <ChartContainer

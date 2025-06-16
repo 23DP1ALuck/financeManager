@@ -1,6 +1,7 @@
 import {prisma} from "@/lib/utils/db";
 import { getServerSession } from "next-auth/next";
 import {authOptions} from "@/lib/utils/authOptions";
+import moment from "moment";
 
 const getTransactions  = async () => {
     const session = await getServerSession(authOptions);
@@ -37,7 +38,7 @@ const LastTransactions =  async () => {
                         <div key={transaction_id} style={{ willChange: 'transform' }}
                              className="flex h-15 items-center rounded-2xl p-2 bg-white/10 border-1 border-black/12 justify-between ease-in-out hover:scale-102 duration-300 will-change: transform;">
                             <div className="flex w-1/3 justify-between items-center">
-                                <h1 className="text-black/90 font-semibold">{date.toDateString()}</h1>
+                                <h1 className="text-black/90 font-semibold">{moment(date).format("MMM DD YYYY")}</h1>
                                 <div className="flex rounded-full w-0.5 h-3 bg-black/30"></div>
                             </div>
                             <div className="flex w-1/3 justify-center items-center">
