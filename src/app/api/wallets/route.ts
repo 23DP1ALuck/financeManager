@@ -1,6 +1,6 @@
 import {NextRequest, NextResponse} from "next/server";
 import {prisma} from "@/lib/utils/db";
-import {getToken} from "next-auth/jwt";
+import {getToken, JWT} from "next-auth/jwt";
 
 interface AddWalletError {
     message: string;
@@ -10,7 +10,7 @@ interface DeleteWalletError {
 }
 
 export async function GET(req : NextRequest) {
-    const token = await getToken({req});
+    const token : JWT | null = await getToken({req});
     if (!token?.user_id) {
         return NextResponse.json({error: `Unauthorized. Token${token}`}, {status: 401});
     }
@@ -29,7 +29,7 @@ export async function GET(req : NextRequest) {
     return NextResponse.json(data);
 }
 export async function POST(req : NextRequest) {
-    const token = await getToken({req});
+    const token : JWT | null = await getToken({req});
     if (!token?.user_id) {
         return NextResponse.json({error: `Unauthorized. Token${token}`}, {status: 401});
     }
@@ -54,7 +54,7 @@ export async function POST(req : NextRequest) {
 
 }
 export async function DELETE(req : NextRequest) {
-    const token = await getToken({req});
+    const token : JWT | null = await getToken({req});
     if(!token?.user_id){
         return NextResponse.json({error: `Unauthorized. Token ${token}`}, {status: 401})
     }

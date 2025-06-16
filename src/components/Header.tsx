@@ -18,7 +18,7 @@ type HeaderProps = {
 const Header = ({sections} : HeaderProps) => {
     const pathname = usePathname();
     return (
-        <div className="flex justify-between w-full sm:px-7 px-2 py-1 bg-[#00FFFF04]">
+        <div className="flex justify-between w-full sm:px-7 px-2 py-1 bg-gray-100">
             <div>
                 <div className="flex items-center py-2.5 gap-9 md:px-6 md:gap-4 w-full">
                     <div className="flex items-center shrink-0">

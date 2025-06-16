@@ -3,6 +3,7 @@ import {sections} from "@/app/constants";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/lib/utils/authOptions";
 import {redirect} from "next/navigation";
+import TransactionsMain from "@/components/transactionsComponents/TransactionsMain";
 
 export default async function Transactions(){
     const session = await getServerSession(authOptions);
@@ -10,6 +11,10 @@ export default async function Transactions(){
         redirect("/auth/login");
     }
     return<>
-        <Header sections={sections}/>
+        <div className="h-dvh bg-gray-100">
+            <Header sections={sections}/>
+            <TransactionsMain/>
+        </div>
+
     </>
 }
