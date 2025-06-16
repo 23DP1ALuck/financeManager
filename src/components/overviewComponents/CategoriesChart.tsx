@@ -58,7 +58,8 @@ const CHART_COLORS = [
 export function Component() {
     // set categoryInformation
     const [categoriesSpendings, setCategoriesSpendings] = useState<CategoriesSpendingWithName[]>()
-
+    // state to for displaying chart if transactions exist
+    const [hasTransactions, setHasTransactions] = useState<boolean>(false);
     // calculate month data
     const currentDate : Moment = moment();
     const nextMonth : Moment = moment().clone().add(1, 'months');
@@ -67,7 +68,14 @@ export function Component() {
     useEffect(() => {
         fetch("/api/transactions/categories")
             .then((res) => res.json())
-            .then((res) => setCategoriesSpendings(res.fullCategorySpendingsLastMonth))
+            .then((res) => {
+
+                if (res.fullCategorySpendingsLastMonth.every((elem : CategoriesSpendingWithName) => elem.category_spent === 0))
+                    setHasTransactions(false)
+                else
+                    setHasTransactions(true)
+                setCategoriesSpendings(res.fullCategorySpendingsLastMonth)
+            })
             .catch(err => console.error("Fetch error:", err));
     }, []);
 
@@ -102,7 +110,7 @@ export function Component() {
                 <CardDescription>{formatted}</CardDescription>
             </CardHeader>
             <CardContent className="flex-1 pb-0">
-                <ChartContainer
+                {hasTransactions ? <ChartContainer
                     config={chartConfig}
                     className="mx-auto aspect-square max-h-[250px]"
                 >
@@ -149,16 +157,22 @@ export function Component() {
                             />
                         </Pie>
                     </PieChart>
-                </ChartContainer>
+                </ChartContainer> : <div className="flex justify-center items-center text-center w-full h-full">
+                    <h1 className="text-3xl text-black/75">No transactions yet</h1>
+                </div>}
             </CardContent>
             <CardFooter className="flex-col gap-2 text-sm">
-                <div className="flex items-center gap-2 font-medium leading-none">
-                    Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-                </div>
-                <div className="leading-none text-muted-foreground">
-                    Category-based spending analysis
-                </div>
+                {hasTransactions && <>
+                    <div className="flex items-center gap-2 font-medium leading-none">
+                        Trending up by 5.2% this month <TrendingUp className="h-4 w-4"/>
+                    </div>
+                    <div className="leading-none text-muted-foreground">
+                        Category-based spending analysis
+                    </div>
+                </>}
+
             </CardFooter>
         </Card>
+
     )
 }

@@ -13,7 +13,7 @@ type UserInfo = {
 
 const Overview = (userInfo: UserInfo) => {
     return (
-        <div className="flex w-full sm:px-7 px-1 bg-[#00FFFF04]">
+        <div className="flex w-full h-9/10 sm:px-7 px-1 bg-[#00FFFF04]">
             <div className="flex md:px-6.5 py-16 flex-col w-1/8 px-2 h-full w-fit">
                 <SideBar/>
             </div>
