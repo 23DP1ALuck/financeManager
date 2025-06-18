@@ -24,6 +24,7 @@ const Header = ({sections} : HeaderProps) => {
                     <div className="flex items-center shrink-0">
                         <Logo/>
                     </div>
+                    <div className="fle"></div>
                     <div className="flex align-center justify-between w-full">
                         <div className="hidden sm:flex justify-center items-center px-2.5 gap-2.5">
                             {sections.map(({section, sectionName, href}) => (
