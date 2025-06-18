@@ -27,22 +27,13 @@ const TransactionList = () => {
             setTransactions(res.data)
         })
     },[])
-    const findTransactionsByDate = (transactions: Transactions[], date: Date): Transactions[] => {
-        const out: Transactions[] = [];
-        transactions.forEach((transaction) => {
-            if(new Date(transaction.date).getFullYear() === new Date(date).getFullYear() &&
-                new Date(transaction.date).getMonth() === new Date(date).getMonth() &&
-                new Date(transaction.date).getDay() === new Date(date).getDay()) {
-                out.push(transaction);
-            }
-        });
-        return out;
-    }
-    const transactionsDays : Record<string, Transactions[]> = {
-    }
-    transactions.map((transaction) => {
-        if(!transactionsDays[moment(transaction.date).format("MMM DD YYYY")]) transactionsDays[moment(transaction.date).format("MMM DD YYYY")] = findTransactionsByDate(transactions, transaction.date);
-    });
+    const transactionsDays : Record<string, Transactions[]> = transactions.reduce((acc: Record<string, Transactions[]>, transaction : Transactions) => {
+        const key = moment(transaction.date).format("YYYY-MM-DD"); // assign date as key
+        if (!acc[key]) acc[key] = []; // if this key not exist add it
+        acc[key].push(transaction); // push transaction to this key
+        return acc;
+    }, {});
+
 
     return(
       <div className="flex flex-col w-1/2 bg-white px-5 py-7 rounded-sm">
