@@ -31,7 +31,7 @@ export default async function Wallets() {
     return(
         <>
             <Header sections={sections}/>
-            <WalletsMain walletProps={walletsProps}/>
+            <WalletsMain/>
         </>
     )
 }
