@@ -16,10 +16,11 @@ import {useOverflow} from "@/hooks/useOverflow";
 
 type TransactionListProps = {
     setTransactionInfo : (transaction : Transactions) => void;
+    onDelete : boolean;
 }
 
 
-const TransactionList = ({setTransactionInfo} : TransactionListProps) => {
+const TransactionList = ({setTransactionInfo, onDelete} : TransactionListProps) => {
     const[isSelected, setIsSelected] = useState<Transactions>(); // selected transaction
     const[isLoading, setIsLoading] = useState<boolean>(true); // loading state
     const [transactions, setTransactions] = useState<Transactions[]>([]); // transactions array
@@ -51,7 +52,7 @@ const TransactionList = ({setTransactionInfo} : TransactionListProps) => {
         return () => {
             controller.abort();
         }
-    },[onSubmit]) // fetch transactions only when submit state is changed and on first render
+    },[onSubmit, onDelete]) // fetch transactions only when submit state is changed and on first render
 
     const transactionsDays : Record<string, Transactions[]> = transactions.reduce((acc: Record<string, Transactions[]>, transaction : Transactions) => {
         const key = moment(transaction.date).format("YYYY-MM-DD"); // assign date as key

@@ -6,10 +6,11 @@ import {Transactions} from "@/lib/types";
 
 const TransactionsListAndInfo = () => {
     const [transactionInfo, setTransactionInfo] = useState<Transactions | undefined | null>(null);
+    const [onDelete, setOnDelete] = useState<boolean>(false);
     return(
         <div className="flex py-5 h-full w-full gap-5">
-            <TransactionList setTransactionInfo={setTransactionInfo}/>
-            <TransactionInfo transaction={transactionInfo}/>
+            <TransactionList setTransactionInfo={setTransactionInfo} onDelete={onDelete}/>
+            <TransactionInfo transaction={transactionInfo} onDeleteInfo={setOnDelete}/>
         </div>
     );
 }

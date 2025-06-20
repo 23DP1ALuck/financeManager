@@ -1,18 +1,25 @@
 "use client"
 import {Transactions} from "@/lib/types";
-import {useEffect, useState} from "react";
+import {Dispatch, SetStateAction, useEffect, useState} from "react";
 import moment from "moment";
+import DeleteTransaction from "@/components/transactionsComponents/DeleteTransaction";
 
 
 type TransactionInfoProps = {
     transaction : Transactions | undefined | null,
+    onDeleteInfo: Dispatch<SetStateAction<boolean>>
 }
-const TransactionInfo = ({transaction} : TransactionInfoProps) => {
+const TransactionInfo = ({transaction, onDeleteInfo} : TransactionInfoProps) => {
     const [transactionsExists, setTransactionsExists] = useState<boolean>(false);
+    const [onDelete, setOnDelete] = useState<boolean>(false);
     useEffect(() => {
         console.log("test", transaction);
-        if(transaction) setTransactionsExists(true);
+        if(transaction) setTransactionsExists(true)
     }, [transaction])
+    useEffect(() => {
+        onDeleteInfo(prev => !prev)
+        setTransactionsExists(false);
+    }, [onDelete, onDeleteInfo]);
     return(
         <div className="flex flex-col justify-between gap-5 w-1/2 bg-white px-5 py-7 rounded-sm h-3/4">
             <h1 className="font-semibold text-2xl text-black/70 px-5 py-1">Transaction details</h1>
@@ -41,10 +48,7 @@ const TransactionInfo = ({transaction} : TransactionInfoProps) => {
                         </div>
                     </div>
                     <div className="flex w-full justify-center">
-                        <div
-                            className="rounded-full py-2 px-4 w-fit text-red-500 border border-red-500 hover:bg-red-500 hover:text-white transition-colors duration-300 cursor-pointer">Remove
-                            transaction
-                        </div>
+                       <DeleteTransaction transactionId={transaction?.transaction_id} onDelete={setOnDelete}/>
                     </div>
                 </div>
                 : <div className="flex flex-col justify-center items-center h-full text-center px-6 text-black/50">
