@@ -1,17 +1,18 @@
 "use client"
 import Filter from "@/components/icons/Filter";
 import SortBy from "@/components/icons/SortBy";
-import {ReactElement, useEffect, useState} from "react";
+import {ReactElement, useEffect, useRef, useState} from "react";
 import {Transactions} from "@/lib/types";
 import {SquarePlay as Entertainment} from "lucide-react";
+import {HandCoins as Other} from "lucide-react";
 import Food from "@/components/icons/Food";
 import Transport from "@/components/icons/Transport";
 import Education from "@/components/icons/Education";
 import Subscriptions from "@/components/icons/Subscriptions";
-import Other from "@/components/icons/Other";
 import moment from "moment/moment";
 import Loading from "@/components/Loading";
 import AddTransaction from "@/components/transactionsComponents/AddTransaction";
+import {useOverflow} from "@/hooks/useOverflow";
 
 type TransactionListProps = {
     setTransactionInfo : (transaction : Transactions) => void;
@@ -19,10 +20,12 @@ type TransactionListProps = {
 
 
 const TransactionList = ({setTransactionInfo} : TransactionListProps) => {
-    const[isSelected, setIsSelected] = useState<Transactions>();
-    const[isLoading, setIsLoading] = useState<boolean>(true);
-    const [transactions, setTransactions] = useState<Transactions[]>([]);
-    const categoryImage : Record<number, ReactElement> = {
+    const[isSelected, setIsSelected] = useState<Transactions>(); // selected transaction
+    const[isLoading, setIsLoading] = useState<boolean>(true); // loading state
+    const [transactions, setTransactions] = useState<Transactions[]>([]); // transactions array
+    const[onSubmit, setOnSubmit] = useState<boolean>(false); // submit state
+    const [overflow, setOverflow] = useState<boolean>(false); // overflow state
+    const categoryImage : Record<number, ReactElement> = { // const for category images displaying
         1: <Food/>,
         2: <Entertainment/>,
         3: <Transport/>,
@@ -30,6 +33,7 @@ const TransactionList = ({setTransactionInfo} : TransactionListProps) => {
         5: <Other/>,
         6: <Subscriptions/>
     }
+    // fetch transactions from api and set transactions array
     useEffect(() => {
         setIsLoading(true);
         const controller = new AbortController();
@@ -47,7 +51,8 @@ const TransactionList = ({setTransactionInfo} : TransactionListProps) => {
         return () => {
             controller.abort();
         }
-    },[])
+    },[onSubmit]) // fetch transactions only when submit state is changed and on first render
+
     const transactionsDays : Record<string, Transactions[]> = transactions.reduce((acc: Record<string, Transactions[]>, transaction : Transactions) => {
         const key = moment(transaction.date).format("YYYY-MM-DD"); // assign date as key
         if (!acc[key]) acc[key] = []; // if this key not exist add it
@@ -55,16 +60,31 @@ const TransactionList = ({setTransactionInfo} : TransactionListProps) => {
         return acc;
     }, {});
     useEffect(() => {
-        if(isSelected) {
-            console.log(isSelected.transaction_name)
-            setTransactionInfo(isSelected);
-        }
+        if(isSelected) setTransactionInfo(isSelected); // set transaction info when transaction is selected
     }, [isSelected, setTransactionInfo]);
     useEffect(() => {
-        setIsSelected(transactions[0]);
+        setIsSelected(transactions[0]); // by default last transaction is selected
     }, [transactions]);
+    const transactionListContainerRef = useRef<HTMLDivElement| null>(null); //ref for scrollable/unscrollable transaction list
 
+    const checkOverflow = (element: HTMLDivElement | null) => {
+        if(element){
+            return element.scrollHeight > element.clientHeight || element.scrollWidth > element.clientWidth; //return true if element is overflowing
+        }
+    }
 
+    useEffect(() => {
+        const element = transactionListContainerRef.current;
+        console.log("element", element)
+        if(element){
+            const isOverflowing : boolean | undefined = checkOverflow(element);
+            if(isOverflowing) setOverflow(true); // set true if overflowing for UI purposes
+            else setOverflow(false);
+        }
+    }, [transactions]);
+    useEffect(() => {
+        console.log("loading state",isLoading)
+    }, [isLoading]);
     return(
       <div className="flex flex-col w-1/2 bg-white px-5 py-7 rounded-sm">
           <div className="flex w-full h-fit justify-between items-center px-5 py-1.5">
@@ -84,16 +104,11 @@ const TransactionList = ({setTransactionInfo} : TransactionListProps) => {
                           <p className="text-sm mt-1">Once you add transactions, you&#39;ll see them here.</p>
                       </div>
                       <div className="flex absolute bottom-0 w-full justify-center pb-6">
-                          <div
-                              className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg cursor-pointer hover:bg-blue-600 transition-colors duration-200">
-                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                              </svg>
-                              <span className="font-medium">Add transaction</span>
+                          <div className="flex w-full justify-center">
+                              <AddTransaction onSubmitSuccess={setOnSubmit}/>
                           </div>
                       </div>
-                  </div> : <div className="flex flex-col justify-between h-full"><div className="flex flex-col">{ Object.keys(transactionsDays).map((date, index) => (
+                  </div> : <div className={`flex flex-col ${!overflow ? "justify-between": "gap-7"} h-full`}><div ref={transactionListContainerRef} className="flex flex-col h-9/10 overflow-y-auto">{ Object.keys(transactionsDays).map((date, index) => (
                       <div key={index} className="flex flex-col gap-4 px-5 py-2.5 font-semibold text-black/50">
                           <h1 className="text-sm font-semibold text-black/50 py-1.5">{moment(date).format("DD MMM YYYY")}</h1>
                           {Object.values(transactionsDays[date]).map((transaction, index) => (
@@ -116,7 +131,7 @@ const TransactionList = ({setTransactionInfo} : TransactionListProps) => {
                       </div>
                   ))}</div>
                   <div className="flex w-full justify-center">
-                      <AddTransaction/>
+                      <AddTransaction onSubmitSuccess={setOnSubmit}/>
                   </div>
                   </div>
               )}

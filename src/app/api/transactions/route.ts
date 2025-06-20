@@ -2,6 +2,11 @@ import {NextRequest, NextResponse} from "next/server";
 import {prisma} from "@/lib/utils/db";
 import {getToken} from "next-auth/jwt";
 
+
+interface AddTransactionError {
+    message: string;
+}
+
 export async function GET(req : NextRequest){
     const token = await getToken({req});
     if(!token?.user_id){
@@ -59,4 +64,30 @@ export async function GET(req : NextRequest){
             }
         }))
     return NextResponse.json({ success: true, data });
+}
+export async function POST(req : NextRequest){
+    const token = await getToken({req});
+    if(!token){
+        return NextResponse.json({error: `Unauthorized. Token${token}`}, {status : 401});
+    }
+    const data = await req.json();
+    try{
+        await prisma.transactions.create({
+            data: {
+                user_id: token.user_id!,
+                transaction_name: data.name,
+                transaction_description: data.description,
+                amount: data.amount,
+                category_id: Number(data.category),
+                account_id: Number(data.walletType),
+            }
+        })
+        console.log(token.user_id);
+        return NextResponse.json({success: true});
+    }catch (e){
+        const addWalletError : AddTransactionError = {
+            message: e instanceof Error ? e.message : "Unknown error occurred"
+        }
+        return NextResponse.json({ success: false, addWalletError });
+    }
 }

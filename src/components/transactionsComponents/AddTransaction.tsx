@@ -5,21 +5,22 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import Image from "next/image";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
-import React, {useEffect, useState} from "react";
+import React, {Dispatch, SetStateAction, useEffect, useState} from "react";
 import {z} from "zod";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Wallet} from "@/lib/types";
+import {CATEGORIES} from "@/app/constants";
 
-
-// type OnSuccessProp = Dispatch<SetStateAction<boolean>>;
-
-const getWallets = async () => {
-    const res = await fetch("/api/wallets");
-    return await res.json();
+type Category = {
+    category_id: number;
+    name: string;
+}
+type SubmitProps = {
+    onSubmitSuccess: Dispatch<SetStateAction<boolean>>
 }
 
-const AddTransaction = () => {
+const AddTransaction = ({onSubmitSuccess}: SubmitProps) => {
     const [wallets, setWallets] = useState<Wallet[]>([]);
     const [open, setOpen] = useState(false);
 
@@ -39,9 +40,7 @@ const AddTransaction = () => {
         description: z.string().max(100, {
             message: "Description must be less than 100 characters",
         }),
-        amount: z.number().min(0, {
-            message: "Amount must be greater than 0",
-        }),
+        amount: z.coerce.number().min(0.01, "Amount must be positive."),
         walletType: z.string().nonempty({
             message: "Wallet type is required",
         }),
@@ -52,36 +51,43 @@ const AddTransaction = () => {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            walletType: "Other",
-            amount: "" as unknown as number,
+            name: "",
+            description: "",
+            amount: 0,
         },
     })
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
+        console.log("submit",JSON.stringify(values));
         try{
-            const res = await fetch("api/wallets", {
+            const res = await fetch("api/transactions", {
                 method: "POST",
                 body: JSON.stringify(values)
             })
             const result = await res.json();
             console.log(result);
-            if (result.success) form.reset();
+            if (result.success) {
+                form.reset()
+                onSubmitSuccess(prev => !prev);
+                return;
+            }
         }catch (e) {
             console.log(e)
             return
         }
         setOpen(false)
-
     }
     return(
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger> <div
+            <DialogTrigger>
+                <div
                 className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg cursor-pointer hover:bg-blue-600 transition-colors duration-200">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
                           d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
                 </svg>
                 <span className="font-medium">Add transaction</span>
-            </div></DialogTrigger>
+            </div>
+            </DialogTrigger>
             <DialogContent className="max-w-md w-[400px] gap-3">
 
                 <DialogHeader>
@@ -104,12 +110,38 @@ const AddTransaction = () => {
                         />
                         <FormField
                             control={form.control}
-                            name="name"
+                            name="description"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Transaction description</FormLabel>
                                     <FormControl>
                                         <Input placeholder="Enter description" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="category"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Category</FormLabel>
+                                    <FormControl>
+                                        <Select onValueChange={field.onChange} value={field.value}>
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue placeholder="Select category" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {CATEGORIES.map((category : Category) => (
+                                                    <SelectItem value={`${category.category_id}`} key={category.category_id}>
+                                                        <div className="flex items-center gap-2">
+                                                            {category.name}
+                                                        </div>
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -127,18 +159,10 @@ const AddTransaction = () => {
                                                 <SelectValue placeholder="Select wallet type" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                {/*{wallets?.map((wallet) => (*/}
-                                                {/*    <SelectItem value={wallet.name} key={wallet.account_id}>*/}
-                                                {/*        <div className="flex items-center gap-2">*/}
-                                                {/*            {wallet.name}*/}
-                                                {/*            /!*<Image src={`${wallet.name.toUpperCase()}.png`} alt={`${wallet.name} Icon`} width={20} height={20}*!/*/}
-                                                {/*            /!*       className="object-contain"/>*!/*/}
-                                                {/*        </div>*/}
-                                                {/*    </SelectItem>*/}
-                                                {/*))}*/}
                                                 {wallets?.map((wallet : Wallet) => (
                                                     <SelectItem value={`${wallet.account_id}`} key={wallet.account_id}>
                                                         <div className="flex items-center gap-2">
+                                                            <Image src={`/${wallet.name.toUpperCase()}.png`} alt={`${wallet.name} Icon`} width={20} height={20}/>
                                                             {wallet.name}
                                                         </div>
                                                     </SelectItem>
@@ -152,19 +176,17 @@ const AddTransaction = () => {
                         />
                         <FormField
                             control={form.control}
-                            name={"amount"}
-                            render={({field}) => (
+                            name="amount"
+                            render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Balance</FormLabel>
+                                    <FormLabel>Amount</FormLabel>
                                     <FormControl>
                                         <Input
+                                            placeholder="Enter amount"
                                             type="number"
-                                            placeholder="Enter balance"
-                                            {...field}
-                                            onChange={e => field.onChange(+e.target.value)}
-                                        />
+                                            {...field} />
                                     </FormControl>
-                                    <FormMessage/>
+                                    <FormMessage />
                                 </FormItem>
                             )}
                         />

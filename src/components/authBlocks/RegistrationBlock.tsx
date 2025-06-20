@@ -7,6 +7,7 @@ import {useRouter} from "next/navigation";
 import {signIn, useSession} from "next-auth/react";
 import {AnimatePresence, motion} from "motion/react";
 import Github from "@/components/icons/Github";
+import {router} from "next/client";
 
 type RegistrationProps = {
     inputs : {
@@ -51,7 +52,7 @@ const  RegistrationBlock = ({inputs} : RegistrationProps) => {
             body: formData
         });
         const result = await res.json();
-        if (result.success) router.push("/auth/login")
+        if (result.success) await router.push("/auth/login")
         else{
             setErrorMessageText(result.registrationError.message || "Unknown error");
             setTimeout(() : void => {

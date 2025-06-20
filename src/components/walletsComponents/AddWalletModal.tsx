@@ -167,7 +167,7 @@ const AddWalletModal = ({onSuccess} : {onSuccess : OnSuccessProp}) => {
                                 <FormMessage/>
                                 {isAlreadyPrimary && (
                                     <FormMessage className="text-red-600">
-                                        You can't set this wallet as primary, because you already have a primary wallet.
+                                        You can&#39;t set this wallet as primary, because you already have a primary wallet.
                                     </FormMessage>
                                 )}
                             </FormItem>

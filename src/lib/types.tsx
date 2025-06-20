@@ -15,7 +15,7 @@ export type Transactions = {
         name: string
     },
     account: {
-        account_id: number,
+        account_id: number | null,
         name: string,
     }
     user_id: number,
