@@ -12,7 +12,7 @@ import Subscriptions from "@/components/icons/Subscriptions";
 import moment from "moment/moment";
 import Loading from "@/components/Loading";
 import AddTransaction from "@/components/transactionsComponents/AddTransaction";
-import {useOverflow} from "@/hooks/useOverflow";
+import {toast, Toaster} from "sonner";
 
 type TransactionListProps = {
     setTransactionInfo : (transaction : Transactions) => void;
@@ -26,6 +26,7 @@ const TransactionList = ({setTransactionInfo, onDelete} : TransactionListProps) 
     const [transactions, setTransactions] = useState<Transactions[]>([]); // transactions array
     const[onSubmit, setOnSubmit] = useState<boolean>(false); // submit state
     const [overflow, setOverflow] = useState<boolean>(false); // overflow state
+    const [showToast,setShowToast] = useState<boolean>(false);
     const categoryImage : Record<number, ReactElement> = { // const for category images displaying
         1: <Food/>,
         2: <Entertainment/>,
@@ -40,8 +41,10 @@ const TransactionList = ({setTransactionInfo, onDelete} : TransactionListProps) 
         const controller = new AbortController();
         const signal = controller.signal;
         fetch('/api/transactions', {method: "GET", signal: signal}).then(res => res.json()).then(res => {
-            console.log(res);
-            setTransactions(res.data)
+            if(res.success){
+                console.log(res);
+                setTransactions(res.data)
+            }
         }).catch(err => {
             if (err.name === "AbortError"){
                 console.log("Cancelled", err.message);
@@ -86,8 +89,16 @@ const TransactionList = ({setTransactionInfo, onDelete} : TransactionListProps) 
     useEffect(() => {
         console.log("loading state",isLoading)
     }, [isLoading]);
+    useEffect(() => {
+        if(showToast){
+            toast.success("Transaction created successfully.")
+            setTimeout(() => setShowToast(false), 1000);
+        }
+
+    }, [showToast]);
     return(
       <div className="flex flex-col w-1/2 bg-white px-5 py-7 rounded-sm">
+          <Toaster/>
           <div className="flex w-full h-fit justify-between items-center px-5 py-1.5">
               <h1 className="text-lg font-semibold text-black/70">Transactions</h1>
               <div className="flex items-center gap-8">
@@ -106,7 +117,7 @@ const TransactionList = ({setTransactionInfo, onDelete} : TransactionListProps) 
                       </div>
                       <div className="flex absolute bottom-0 w-full justify-center pb-6">
                           <div className="flex w-full justify-center">
-                              <AddTransaction onSubmitSuccess={setOnSubmit}/>
+                              <AddTransaction onSubmitSuccess={setOnSubmit} showToast={setShowToast}/>
                           </div>
                       </div>
                   </div> : <div className={`flex flex-col ${!overflow ? "justify-between": "gap-7"} h-full`}><div ref={transactionListContainerRef} className="flex flex-col h-9/10 overflow-y-auto">{ Object.keys(transactionsDays).map((date, index) => (
@@ -132,7 +143,7 @@ const TransactionList = ({setTransactionInfo, onDelete} : TransactionListProps) 
                       </div>
                   ))}</div>
                   <div className="flex w-full justify-center">
-                      <AddTransaction onSubmitSuccess={setOnSubmit}/>
+                      <AddTransaction onSubmitSuccess={setOnSubmit} showToast={setShowToast}/>
                   </div>
                   </div>
               )}
