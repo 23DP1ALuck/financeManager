@@ -24,7 +24,7 @@ const DeleteTransaction = ({transactionId, onDelete} : DeleteTransactionProps) =
         try{
             if(transactionId){
                 const data = {
-                    walletId: transactionId,
+                    transactionId: transactionId,
                 }
                 await fetch("/api/transactions", {
                     method: "DELETE",
@@ -33,7 +33,7 @@ const DeleteTransaction = ({transactionId, onDelete} : DeleteTransactionProps) =
                 {
                     if (res.success) {
                         console.log("res in delete comp",res)
-                        onDelete(true);
+                        onDelete(prev => !prev);
                         setOpen(prev => !prev);
                     }
                     console.log("res in delete comp",res)
@@ -62,7 +62,7 @@ const DeleteTransaction = ({transactionId, onDelete} : DeleteTransactionProps) =
                                 Are you sure you want to delete this transaction? This action&nbsp;<span className="font-semibold text-red-600">cannot be undone</span>.
                             </DialogDescription>
                         </DialogHeader>
-                        <DialogFooter>
+                        <DialogFooter className="mt-4">
                             <DialogClose asChild>
                                 <Button variant="outline">Cancel</Button>
                             </DialogClose>
