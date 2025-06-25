@@ -5,22 +5,23 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import Image from "next/image";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
-import React, {Dispatch, SetStateAction, useEffect, useState} from "react";
+import React, {Dispatch, SetStateAction, useEffect, useRef, useState} from "react";
 import {z} from "zod";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Wallet} from "@/lib/types";
 import {CATEGORIES} from "@/app/constants";
-
+import {toast} from "sonner";
 type Category = {
     category_id: number;
     name: string;
 }
 type SubmitProps = {
     onSubmitSuccess: Dispatch<SetStateAction<boolean>>
+    showToast: Dispatch<SetStateAction<boolean>>
 }
 
-const AddTransaction = ({onSubmitSuccess}: SubmitProps) => {
+const AddTransaction = ({onSubmitSuccess, showToast}: SubmitProps) => {
     const [wallets, setWallets] = useState<Wallet[]>([]);
     const [open, setOpen] = useState(false);
 
@@ -64,18 +65,26 @@ const AddTransaction = ({onSubmitSuccess}: SubmitProps) => {
                 body: JSON.stringify(values)
             })
             const result = await res.json();
-            console.log(result);
+            console.log("RESULT", result);
+            if(res.status === 400){
+                toast.error(result.error)
+            }
             if (result.success) {
                 form.reset()
                 onSubmitSuccess(prev => !prev);
+                showToast(true);
+                setOpen(false)
                 return;
             }
         }catch (e) {
             console.log(e)
             return
         }
-        setOpen(false)
     }
+    const selectedWalletId = form.watch("walletType")
+    const selectedWallet: Wallet | undefined = wallets.find((wallet: Wallet) =>
+        wallet.account_id === Number(selectedWalletId)
+    )
     return(
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger>
@@ -170,7 +179,7 @@ const AddTransaction = ({onSubmitSuccess}: SubmitProps) => {
                                                 </SelectContent>
                                         </Select>
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage/>
                                 </FormItem>
                             )}
                         />
@@ -187,10 +196,13 @@ const AddTransaction = ({onSubmitSuccess}: SubmitProps) => {
                                             {...field} />
                                     </FormControl>
                                     <FormMessage />
+                                    {selectedWallet && selectedWallet.balance < form.watch("amount") &&
+                                        <div className="flex text-xl font-medium text-red-500">Not enough money</div>}
                                 </FormItem>
                             )}
                         />
-                        <Button type="submit">Submit</Button>
+                        {selectedWallet && selectedWallet.balance < form.watch("amount") ?
+                            <Button disabled={true} type="submit">Submit</Button> : <Button disabled={false} type="submit">Submit</Button>}
                     </form>
                 </Form>
             </DialogContent>
