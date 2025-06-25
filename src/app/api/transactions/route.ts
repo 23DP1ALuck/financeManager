@@ -75,18 +75,45 @@ export async function POST(req : NextRequest){
     }
     const data = await req.json();
     try{
-        await prisma.transactions.create({
-            data: {
-                user_id: token.user_id!,
-                transaction_name: data.name,
-                transaction_description: data.description,
-                amount: data.amount,
-                category_id: Number(data.category),
-                account_id: Number(data.walletType),
+        const selectedWallet = await prisma.accounts.findFirst({
+            where: {AND: [
+                    {user_id: token.user_id},
+                    {account_id: Number(data.walletType)}
+                ]},
+            select: {
+                balance: true,
             }
         })
-        console.log(token.user_id);
-        return NextResponse.json({success: true});
+        if(selectedWallet){
+            if(data.amount > selectedWallet.balance){
+                return NextResponse.json({error: "Not enough money"}, {status: 400});
+            } else{
+                await prisma.transactions.create({
+                    data: {
+                        user_id: token.user_id!,
+                        transaction_name: data.name,
+                        transaction_description: data.description,
+                        amount: data.amount,
+                        category_id: Number(data.category),
+                        account_id: Number(data.walletType),
+                    }
+                })
+                await prisma.accounts.updateMany({
+                    where: {AND: [
+                            {user_id : token.user_id},
+                            {account_id: Number(data.walletType)}
+                        ]
+                    }, data: {
+                        balance: {
+                            decrement: data.amount
+                        }
+                    }
+                })
+                console.log(token.user_id);
+                return NextResponse.json({success: true});
+            }
+        }
+
     }catch (e){
         const addWalletError : AddTransactionError = {
             message: e instanceof Error ? e.message : "Unknown error occurred"
