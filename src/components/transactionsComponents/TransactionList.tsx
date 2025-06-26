@@ -2,7 +2,7 @@
 import Filter from "@/components/icons/Filter";
 import SortBy from "@/components/icons/SortBy";
 import {ReactElement, useEffect, useRef, useState} from "react";
-import {Transactions} from "@/lib/types";
+import {Filters, Transactions} from "@/lib/types";
 import {SquarePlay as Entertainment} from "lucide-react";
 import {HandCoins as Other} from "lucide-react";
 import Food from "@/components/icons/Food";
@@ -13,6 +13,8 @@ import moment from "moment/moment";
 import Loading from "@/components/Loading";
 import AddTransaction from "@/components/transactionsComponents/AddTransaction";
 import {toast, Toaster} from "sonner";
+import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion";
+import {FilterForm} from "@/components/transactionsComponents/FilterForm";
 
 type TransactionListProps = {
     setTransactionInfo : (transaction : Transactions) => void;
@@ -26,7 +28,8 @@ const TransactionList = ({setTransactionInfo, onDelete} : TransactionListProps) 
     const [transactions, setTransactions] = useState<Transactions[]>([]); // transactions array
     const[onSubmit, setOnSubmit] = useState<boolean>(false); // submit state
     const [overflow, setOverflow] = useState<boolean>(false); // overflow state
-    const [showToast,setShowToast] = useState<boolean>(false);
+    const [showToast,setShowToast] = useState<boolean>(false); // toast state
+    const [filter, setFilter] = useState<Filters | null>();
     const categoryImage : Record<number, ReactElement> = { // const for category images displaying
         1: <Food/>,
         2: <Entertainment/>,
@@ -38,24 +41,16 @@ const TransactionList = ({setTransactionInfo, onDelete} : TransactionListProps) 
     // fetch transactions from api and set transactions array
     useEffect(() => {
         setIsLoading(true);
-        const controller = new AbortController();
-        const signal = controller.signal;
-        fetch('/api/transactions', {method: "GET", signal: signal}).then(res => res.json()).then(res => {
+        fetch(url(), {method: "GET"}).then(res => res.json()).then(res => {
+            console.log("huj", res)
             if(res.success){
                 console.log(res);
                 setTransactions(res.data)
             }
         }).catch(err => {
-            if (err.name === "AbortError"){
-                console.log("Cancelled", err.message);
-            }else{
-                console.error("Undefined error occurred")
-            }
+            console.error("Error occurred", err)
         }).finally(() => setIsLoading(false));
-        return () => {
-            controller.abort();
-        }
-    },[onSubmit, onDelete]) // fetch transactions only when submit state is changed and on first render
+    },[onSubmit, filter, onDelete,]) // fetch transactions only when submit state is changed and on first render
 
     const transactionsDays : Record<string, Transactions[]> = transactions.reduce((acc: Record<string, Transactions[]>, transaction : Transactions) => {
         const key = moment(transaction.date).format("YYYY-MM-DD"); // assign date as key
@@ -87,7 +82,7 @@ const TransactionList = ({setTransactionInfo, onDelete} : TransactionListProps) 
         }
     }, [transactions]);
     useEffect(() => {
-        console.log("loading state",isLoading)
+        console.log("loading state →", isLoading);
     }, [isLoading]);
     useEffect(() => {
         if(showToast){
@@ -96,14 +91,40 @@ const TransactionList = ({setTransactionInfo, onDelete} : TransactionListProps) 
         }
 
     }, [showToast]);
+    useEffect(() => {
+        console.log(url())
+    }, [filter])
+    const url = (): string => {
+        if (filter) {
+            const params = new URLSearchParams();
+            if (filter.account) params.append("account", filter.account);
+            if (filter.category) params.append("category", filter.category);
+            if (filter.dateFrom) params.append("dateFrom", filter.dateFrom);
+            if (filter.dateTo) params.append("dateTo", filter.dateTo);
+            if (params.size > 0) {
+                return `/api/transactions?${params.toString()}`;
+            } else {
+                return "/api/transactions"
+            }
+        }
+        return "/api/transactions";
+    }
     return(
       <div className="flex flex-col w-1/2 bg-white px-5 py-7 rounded-sm">
           <Toaster/>
-          <div className="flex w-full h-fit justify-between items-center px-5 py-1.5">
-              <h1 className="text-lg font-semibold text-black/70">Transactions</h1>
-              <div className="flex items-center gap-8">
-                  <Filter className="size-3.5 cursor-pointer"/>
-                  <SortBy className="size-3.5 cursor-pointer"/>
+          <div className="flex flex-col w-full">
+              <div className="flex w-full h-fit justify-between px-5 py-1.5">
+                  <h1 className="text-lg font-semibold text-black/70">Transactions</h1>
+              </div>
+              <div className="px-5">
+                  <Accordion type="single" collapsible>
+                      <AccordionItem value="item-1">
+                          <AccordionTrigger>Filter</AccordionTrigger>
+                          <AccordionContent>
+                              <FilterForm filterOnSubmitAction={setFilter}/>
+                          </AccordionContent>
+                      </AccordionItem>
+                  </Accordion>
               </div>
           </div>
           {isLoading ? <div className="flex justify-center items-center w-full h-full"><Loading/></div> :
@@ -120,7 +141,7 @@ const TransactionList = ({setTransactionInfo, onDelete} : TransactionListProps) 
                               <AddTransaction onSubmitSuccess={setOnSubmit} showToast={setShowToast}/>
                           </div>
                       </div>
-                  </div> : <div className={`flex flex-col ${!overflow ? "justify-between": "gap-7"} h-full`}><div ref={transactionListContainerRef} className="flex flex-col h-9/10 overflow-y-auto">{ Object.keys(transactionsDays).map((date, index) => (
+                  </div> : <div className={`flex flex-col flex-1 overflow-y-auto justify-between`}><div ref={transactionListContainerRef} className="flex flex-col h-9/10 overflow-y-auto">{ Object.keys(transactionsDays).map((date, index) => (
                       <div key={index} className="flex flex-col gap-4 px-5 py-2.5 font-semibold text-black/50">
                           <h1 className="text-sm font-semibold text-black/50 py-1.5">{moment(date).format("DD MMM YYYY")}</h1>
                           {Object.values(transactionsDays[date]).map((transaction, index) => (

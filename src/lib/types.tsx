@@ -22,3 +22,9 @@ export type Transactions = {
     transaction_name: string,
     transaction_description?: string,
 }
+export type Filters = {
+    dateFrom?: string,
+    dateTo?: string,
+    category?: string,
+    account?: string,
+}

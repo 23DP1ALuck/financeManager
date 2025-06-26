@@ -21,10 +21,10 @@ export async function GET(req : NextRequest){
     };
 
     const params = new URLSearchParams(req.url.split('?')[1]);
-    const selectedWallet = Number(params.get('walletId'));
-    const selectedCategory = Number(params.get('categoryId'));
-    const selectedFrom = params.get('from');
-    const selectedTo = params.get('to');
+    const selectedWallet = Number(params.get('account'));
+    const selectedCategory = Number(params.get('category'));
+    const selectedFrom = params.get('dateFrom');
+    const selectedTo = params.get('dateTo');
     if(selectedWallet){
         filters.account_id = selectedWallet;
     }
