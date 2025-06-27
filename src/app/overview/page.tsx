@@ -1,4 +1,4 @@
-import Header from "@/components/Header";
+import Header from "@/components/shared/Header";
 import Overview from "@/components/overviewComponents/Overview";
 import { getServerSession } from "next-auth/next";
 import {redirect} from "next/navigation";

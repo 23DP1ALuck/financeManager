@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import {Montserrat} from "next/font/google";
 import "./globals.css";
 import { getServerSession} from "next-auth";
-import SessionProvider from "@/components/SessionProvider";
+import SessionProvider from "@/lib/utils/SessionProvider";
 import {redirect} from "next/navigation";
 
 const montserrat = Montserrat({

@@ -1,5 +1,5 @@
 import {sections} from "@/app/constants";
-import Header from "@/components/Header";
+import Header from "@/components/shared/Header";
 import {getServerSession} from "next-auth/next";
 import {authOptions} from "@/lib/utils/authOptions";
 import {redirect} from "next/navigation";

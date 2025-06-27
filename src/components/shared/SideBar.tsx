@@ -9,7 +9,7 @@ import {useEffect} from "react";
 
 export const SideBar = () => {
     return (
-        <div className="flex flex-col py-1 px-1 w-fit bg-white rounded-3xl border-1 border-black/10">
+        <div className="flex-col py-1 px-1 w-fit bg-white rounded-3xl border-1 border-black/10 hidden sm:flex">
             <div className="flex flex-col items-center gap-5">
                 <div className="flex rounded-full text-white w-fit p-2 bg-black/80 duration-150">
                     <Home/>

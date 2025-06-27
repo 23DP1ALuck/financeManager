@@ -1,4 +1,4 @@
-import Header from "@/components/Header";
+import Header from "@/components/shared/Header";
 import {sections} from "@/app/constants";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/lib/utils/authOptions";
