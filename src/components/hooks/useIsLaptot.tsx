@@ -1,6 +1,6 @@
 import {useEffect, useRef, useState} from "react";
 
-const getIsMobile = () => window.innerWidth <= 1024;
+const getIsMobile = () => window.innerWidth < 1024;
 
 export const useIsLaptot = () => {
     const [isMobile, setIsMobile] = useState(getIsMobile());

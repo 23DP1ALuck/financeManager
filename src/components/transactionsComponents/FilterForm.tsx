@@ -15,7 +15,7 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import React, {useEffect, useState} from "react";
+import React, {FC, useEffect, useState} from "react";
 import {Filters, Wallet} from "@/lib/types";
 import Image from "next/image";
 import moment from "moment";
@@ -39,6 +39,7 @@ type FilterFormProps = {
     filterOnSubmitAction: (values: Filters | null) => void;
 }
 
+
 export function FilterForm({filterOnSubmitAction}: FilterFormProps) {
     const [wallets, setWallets] = useState<Wallet[]>([]);
     useEffect(() => {
@@ -53,8 +54,15 @@ export function FilterForm({filterOnSubmitAction}: FilterFormProps) {
     const months: string[] = moment.monthsShort()
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
+        defaultValues: {
+            categories: "",
+            walletType: "",
+            fromYear: "",
+            fromMonth: "",
+            toYear: "",
+            toMonth: "",
+        }
     })
-
 
     function onSubmit(data: z.infer<typeof FormSchema>) {
         const filters: Filters = {
@@ -64,6 +72,30 @@ export function FilterForm({filterOnSubmitAction}: FilterFormProps) {
             ...(data.walletType && {account: data.walletType}),
         }
         filterOnSubmitAction(filters);
+    }
+
+    const toMonthWatcher = form.watch("toMonth");
+    const toYearWatcher = form.watch("toYear")
+    useEffect(() => {
+        console.log("toMonthWatcher", toMonthWatcher);
+        console.log("toYearWatcher", toYearWatcher);
+    }, [toMonthWatcher]);
+    useEffect(() => {
+        console.log("toYearWatcher", toYearWatcher);
+    }, [toYearWatcher]);
+    const SelectMonthLabel : FC = () => {
+        if(form.watch("fromYear") === "" && form.watch("fromMonth") !== ""){
+            return <div className="flex w-full text-red-500">Year is required when a month is selected</div>
+        }
+        if(form.watch("fromYear") === undefined && form.watch("fromMonth") !== undefined){
+            return <div className="flex w-full text-red-500">Year is required when a month is selected</div>
+        }
+        if(form.watch("toYear") === "" && form.watch("toMonth") !== ""){
+            return <div className="flex w-full text-red-500">Year is required when a month is selected</div>
+        }
+        if(form.watch("toYear") === undefined && form.watch("toMonth") !== undefined){
+            return <div className="flex w-full text-red-500">Year is required when a month is selected</div>
+        }
     }
     return (
         <Form {...form}>
@@ -152,6 +184,7 @@ export function FilterForm({filterOnSubmitAction}: FilterFormProps) {
                                                 </Select>
                                             </FormControl>
                                             <FormMessage />
+                                            {/*{form.watch("fromYear") === undefined && form.watch("fromMonth") !== undefined && <div className="flex">Year is required when a month is selected</div>}*/}
                                         </FormItem>
                                     )}
                                 />
@@ -242,19 +275,21 @@ export function FilterForm({filterOnSubmitAction}: FilterFormProps) {
                                     )}
                                 />
                             </div>
+                            <SelectMonthLabel/>
                         </div>
                     </div>
+
                 </div>
                 <div className="flex w-full justify-between">
-                    <Button className="w-1/4" type="submit">Search</Button>
+                    <Button className="w-1/4" type="submit">Search</Button> {/* TODO: disable when please select year also selected (in server also */}
                     <Button className="w-1/4 bg-red-500 hover:bg-red-600 duration-150" type="reset" onClick={() => {
                         form.reset({
                             categories: "",
                             walletType: "",
-                            fromYear: "",
-                            fromMonth: "",
-                            toYear: "",
-                            toMonth: "",
+                            fromYear: undefined,
+                            fromMonth: undefined,
+                            toYear: undefined,
+                            toMonth: undefined,
                         })
                         toast.success("Reset filters")
                         filterOnSubmitAction(null);
