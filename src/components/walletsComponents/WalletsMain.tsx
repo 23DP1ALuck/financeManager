@@ -1,4 +1,4 @@
-import {SideBar} from "@/components/SideBar";
+import {SideBar} from "@/components/shared/SideBar";
 import WalletsLeftAndRight from "@/components/walletsComponents/WalletsLeftAndRight";
 
 const WalletsMain = async () => {

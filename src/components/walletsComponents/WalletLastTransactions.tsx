@@ -1,7 +1,7 @@
 "use client"
 import {Transactions, Wallet} from "@/lib/types";
 import {useEffect, useState} from "react";
-import Loading from "@/components/Loading";
+import Loading from "@/components/shared/Loading";
 
 
 type WalletLastTransactionsProps = {

@@ -3,7 +3,7 @@ import BudgetBlock from "@/components/overviewComponents/BudgetBlock";
 import BalanceBlock from "@/components/overviewComponents/BalanceBlock";
 import LastTransactions from "@/components/overviewComponents/LastTransactions";
 import {Component as CategoriesChart} from "@/components/overviewComponents/CategoriesChart"
-import {SideBar} from "@/components/SideBar";
+import {SideBar} from "@/components/shared/SideBar";
 
 type UserInfo = {
     name: string,

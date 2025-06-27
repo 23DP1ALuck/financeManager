@@ -21,7 +21,7 @@ const TransactionInfo = ({transaction, onDeleteInfo} : TransactionInfoProps) => 
         setTransactionsExists(false);
     }, [onDelete, onDeleteInfo]);
     return(
-        <div className="flex flex-col justify-between gap-5 w-1/2 bg-white px-5 py-7 rounded-sm h-3/4">
+        <div className="hidden lg:flex flex-col justify-between gap-5 w-1/2 bg-white px-5 py-7 rounded-sm h-3/4">
             <h1 className="font-semibold text-2xl text-black/70 px-5 py-1">Transaction details</h1>
             {transactionsExists ?
                 <div className="flex flex-col justify-between w-full h-full">
