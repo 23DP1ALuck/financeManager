@@ -19,6 +19,7 @@ import React, {useEffect, useState} from "react";
 import {Filters, Wallet} from "@/lib/types";
 import Image from "next/image";
 import moment from "moment";
+import {useIsLaptot} from "@/components/hooks/useIsLaptot";
 
 type Category = {
     category_id: number;
@@ -64,7 +65,6 @@ export function FilterForm({filterOnSubmitAction}: FilterFormProps) {
         }
         filterOnSubmitAction(filters);
     }
-
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
@@ -78,7 +78,7 @@ export function FilterForm({filterOnSubmitAction}: FilterFormProps) {
                                     <FormLabel>Category</FormLabel>
                                     <FormControl>
                                         <Select onValueChange={field.onChange} value={field.value}>
-                                            <SelectTrigger className="w-1/2">
+                                            <SelectTrigger className="w-3/4 lg:w-1/2">
                                                 <SelectValue placeholder="Select category" />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -104,7 +104,7 @@ export function FilterForm({filterOnSubmitAction}: FilterFormProps) {
                                     <FormLabel>Wallet</FormLabel>
                                     <FormControl>
                                         <Select onValueChange={field.onChange} value={field.value}>
-                                            <SelectTrigger className="w-1/2">
+                                            <SelectTrigger className="w-3/4 lg:w-1/2">
                                                 <SelectValue placeholder="Select wallet type" />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -246,7 +246,7 @@ export function FilterForm({filterOnSubmitAction}: FilterFormProps) {
                     </div>
                 </div>
                 <div className="flex w-full justify-between">
-                    <Button className="w-1/4" type="submit">Submit</Button>
+                    <Button className="w-1/4" type="submit">Search</Button>
                     <Button className="w-1/4 bg-red-500 hover:bg-red-600 duration-150" type="reset" onClick={() => {
                         form.reset({
                             categories: "",

@@ -9,11 +9,13 @@ import Education from "@/components/icons/Education";
 import Subscriptions from "@/components/icons/Subscriptions";
 import AddTransaction from "@/components/transactionsComponents/AddTransaction";
 import {Dispatch, SetStateAction} from "react";
+import DeleteTransaction from "@/components/transactionsComponents/DeleteTransaction";
 
 type TransactionsListLaptopProps = {
     transactionsDays : Record<string, Transactions[]>
     onSubmitAction: Dispatch<SetStateAction<boolean>>
     setShowToast: Dispatch<SetStateAction<boolean>>
+    onDeleteAction: Dispatch<SetStateAction<boolean>>
 }
 const categoryImage : Record<number, ReactElement> = { // const for category images displaying
     1: <Food className={"size-4"}/>,
@@ -24,7 +26,7 @@ const categoryImage : Record<number, ReactElement> = { // const for category ima
     6: <Subscriptions className={"size-4"}/>
 }
 
-const TransactionsListLaptop = ({transactionsDays, onSubmitAction, setShowToast} : TransactionsListLaptopProps) => {
+const TransactionsListLaptop = ({transactionsDays, onSubmitAction, setShowToast, onDeleteAction} : TransactionsListLaptopProps) => {
     const[onSubmit, setOnSubmit] = useState<boolean>(false); // submit state
     useEffect(() => {
         onSubmitAction(onSubmit);
@@ -74,6 +76,9 @@ const TransactionsListLaptop = ({transactionsDays, onSubmitAction, setShowToast}
                                                     <span className="w-28 font-medium text-base text-black/90">Date:</span>
                                                     <span className="text-black/80">{moment(transaction?.date).format("MMM DD YYYY")}</span>
                                                 </div>
+                                            </div>
+                                            <div className="flex w-full justify-center">
+                                                <DeleteTransaction transactionId={transaction?.transaction_id} onDelete={() => onDeleteAction(prev => !prev)}/>
                                             </div>
                                         </div>
                                     </AccordionContent>

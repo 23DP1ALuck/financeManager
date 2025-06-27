@@ -30,17 +30,9 @@ const TransactionList = ({setTransactionInfo, onDelete} : TransactionListProps) 
     const[isLoading, setIsLoading] = useState<boolean>(true); // loading state
     const [transactions, setTransactions] = useState<Transactions[]>([]); // transactions array
     const[onSubmit, setOnSubmit] = useState<boolean>(false); // submit state
-    const [overflow, setOverflow] = useState<boolean>(false); // overflow state
     const [showToast,setShowToast] = useState<boolean>(false); // toast state
     const [filter, setFilter] = useState<Filters | null>();
-    const categoryImage : Record<number, ReactElement> = { // const for category images displaying
-        1: <Food className={"size-4"}/>,
-        2: <Entertainment className={"size-4"}/>,
-        3: <Transport className={"size-4"}/>,
-        4: <Education className={"size-4"}/>,
-        5: <Other className={"size-4"}/>,
-        6: <Subscriptions className={"size-4"}/>
-    }
+    const [onDeleteLaptop, setOnDeleteLaptop] = useState<boolean>(false);
     // fetch transactions from api and set transactions array
     useEffect(() => {
         setIsLoading(true);
@@ -53,7 +45,7 @@ const TransactionList = ({setTransactionInfo, onDelete} : TransactionListProps) 
         }).catch(err => {
             console.error("Error occurred", err)
         }).finally(() => setIsLoading(false));
-    },[onSubmit, filter, onDelete,]) // fetch transactions only when submit state is changed and on first render
+    },[onSubmit, filter, onDelete,onDeleteLaptop]) // fetch transactions only when submit state is changed and on first render
 
     const transactionsDays : Record<string, Transactions[]> = transactions.reduce((acc: Record<string, Transactions[]>, transaction : Transactions) => {
         const key = moment(transaction.date).format("YYYY-MM-DD"); // assign date as key
@@ -67,26 +59,6 @@ const TransactionList = ({setTransactionInfo, onDelete} : TransactionListProps) 
     useEffect(() => {
         setIsSelected(transactions[0]); // by default last transaction is selected
     }, [transactions]);
-    const transactionListContainerRef = useRef<HTMLDivElement| null>(null); //ref for scrollable/unscrollable transaction list
-
-    const checkOverflow = (element: HTMLDivElement | null) => {
-        if(element){
-            return element.scrollHeight > element.clientHeight || element.scrollWidth > element.clientWidth; //return true if element is overflowing
-        }
-    }
-
-    useEffect(() => {
-        const element = transactionListContainerRef.current;
-        console.log("element", element)
-        if(element){
-            const isOverflowing : boolean | undefined = checkOverflow(element);
-            if(isOverflowing) setOverflow(true); // set true if overflowing for UI purposes
-            else setOverflow(false);
-        }
-    }, [transactions]);
-    useEffect(() => {
-        console.log("loading state →", isLoading);
-    }, [isLoading]);
     useEffect(() => {
         if(showToast){
             toast.success("Transaction created successfully.")
@@ -113,10 +85,6 @@ const TransactionList = ({setTransactionInfo, onDelete} : TransactionListProps) 
         return "/api/transactions";
     }
     const isLaptop = useIsLaptot();
-    const [detailedTransaction, setDetailedTransaction] = useState<Transactions | null>();
-    useEffect(() => {
-        console.log("detailed transaction", detailedTransaction)
-    }, [detailedTransaction]);
     return(
       <div className="flex flex-col lg:w-1/2 w-full bg-white px-5 py-7 rounded-sm">
           <Toaster/>
@@ -171,7 +139,7 @@ const TransactionList = ({setTransactionInfo, onDelete} : TransactionListProps) 
             </div>
           ) : (
               isLaptop ? (
-                  <TransactionsListLaptop transactionsDays={transactionsDays} onSubmitAction={setOnSubmit} setShowToast={setShowToast} />
+                  <TransactionsListLaptop transactionsDays={transactionsDays} onSubmitAction={setOnSubmit} setShowToast={setShowToast} onDeleteAction={setOnDeleteLaptop}/>
               ) : (
                   <TransactionsListComputer
                       transactionsDays={transactionsDays}
