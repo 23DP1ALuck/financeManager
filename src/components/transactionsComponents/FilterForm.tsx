@@ -171,7 +171,7 @@ export function FilterForm({filterOnSubmitAction}: FilterFormProps) {
                                                         <SelectValue placeholder="Year" />
                                                     </SelectTrigger>
                                                     <SelectContent className="max-h-[200px]">
-                                                        <div className="overflow-y-auto max-h-[200px]">
+                                                        <div>
                                                             {lastTwentyYears.map(elem => (
                                                                 <SelectItem value={`${elem}`} key={elem}>
                                                                     <div className="flex items-center gap-2 text-sm">
@@ -199,7 +199,7 @@ export function FilterForm({filterOnSubmitAction}: FilterFormProps) {
                                                         <SelectValue placeholder="Month" />
                                                     </SelectTrigger>
                                                     <SelectContent className="max-h-[200px]">
-                                                        <div className="overflow-y-auto max-h-[200px]">
+                                                        <div>
                                                             {months.map(elem => (
                                                                 <SelectItem value={`${elem}`} key={elem}>
                                                                     <div className="flex items-center gap-2 text-sm">
@@ -231,7 +231,7 @@ export function FilterForm({filterOnSubmitAction}: FilterFormProps) {
                                                         <SelectValue placeholder="Year" />
                                                     </SelectTrigger>
                                                     <SelectContent className="max-h-[200px]">
-                                                        <div className="overflow-y-auto max-h-[200px]">
+                                                        <div>
                                                             {lastTwentyYears.map(elem => (
                                                                 <SelectItem value={`${elem}`} key={elem}>
                                                                     <div className="flex items-center gap-2 text-sm">
@@ -258,7 +258,7 @@ export function FilterForm({filterOnSubmitAction}: FilterFormProps) {
                                                         <SelectValue placeholder="Month" />
                                                     </SelectTrigger>
                                                     <SelectContent className="max-h-[200px]">
-                                                        <div className="overflow-y-auto max-h-[200px]">
+                                                        <div>
                                                             {months.map(elem => (
                                                                 <SelectItem value={`${elem}`} key={elem}>
                                                                     <div className="flex items-center gap-2 text-sm">
