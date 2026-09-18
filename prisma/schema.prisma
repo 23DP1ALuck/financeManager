@@ -81,4 +81,5 @@ enum CATEGORY_NAME {
   Transport
   Education
   Other
+  Income
 }

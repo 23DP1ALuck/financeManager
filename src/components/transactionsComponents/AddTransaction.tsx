@@ -24,7 +24,9 @@ type SubmitProps = {
 const AddTransaction = ({onSubmitSuccess, showToast}: SubmitProps) => {
     const [wallets, setWallets] = useState<Wallet[]>([]);
     const [open, setOpen] = useState(false);
-
+    useEffect(() => {
+        console.log("Categories", CATEGORIES);
+    }, [CATEGORIES]);
     useEffect(() => {
         fetch("/api/wallets").then((res) => res.json()).then((res) => {
             console.log("fetcheed", res);
