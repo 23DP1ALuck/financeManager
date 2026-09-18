@@ -24,57 +24,84 @@ Wallet names are labels only: the application does not connect to banks or move 
 | Interface | Tailwind CSS, Radix UI, Recharts, Motion |
 | Forms | React Hook Form, Zod |
 
-## Local setup
+## Run with Docker Compose
 
-These instructions target a **new, disposable development database**. They were checked against the source; a fresh database and OAuth flow were not run during the documentation review.
+Install Docker Desktop (or Docker Engine with the Compose plugin) and make sure it is running. Docker provides Node.js and MySQL, so you do not need to install them separately on your computer.
 
-### 1. Prerequisites
-
-- Node.js 22 and npm.
-- Local MySQL 8, an empty database, and a dedicated database user allowed to create tables in that database.
-- Git to clone the repository.
-
-Clone the repository, open its directory, and install the locked dependencies:
+After completing the first-time setup below, start the project with:
 
 ```bash
-npm ci
+docker compose build
+docker compose up
 ```
 
-The current lockfile needs security updates before network exposure. Keep this setup local; see the publication checklist.
-
-### 2. Environment
-
-For a fresh checkout without a local environment file:
+Or combine both commands:
 
 ```bash
+docker compose up --build
+```
+
+Open [http://localhost:3000/auth/login](http://localhost:3000/auth/login). The root page is only a basic landing page.
+
+## First-time setup
+
+### 1. Clone and configure
+
+```bash
+git clone https://github.com/23DP1ALuck/financeManager.git
+cd financeManager
 cp .env.example .env
-openssl rand -base64 32
 ```
 
-If `.env` already exists, edit it instead of overwriting your configuration. Put the generated random value in `NEXTAUTH_SECRET` and configure your own database credentials. Never reuse secrets from somebody else's checkout.
+If you already have a local `.env`, edit it instead of overwriting it. Set these values:
 
-| Variable | Purpose |
+| Variable | Value |
 | --- | --- |
-| `DATABASE_URL` | MySQL connection string for your development database |
-| `NEXTAUTH_URL` | Normally `http://localhost:3000` |
-| `NEXTAUTH_SECRET` | Your private random session secret |
+| `MYSQL_ROOT_PASSWORD` | A private password for the MySQL root user |
+| `MYSQL_PASSWORD` | A different private password for the application database user |
+| `DATABASE_URL` | `mysql://appuser:YOUR_APP_PASSWORD@db:3306/finance` |
+| `NEXTAUTH_URL` | `http://localhost:3000` |
+| `NEXTAUTH_SECRET` | A private random session secret |
 | `GOOGLE_ID`, `GOOGLE_SECRET` | Optional Google OAuth application credentials |
 | `GITHUB_ID`, `GITHUB_SECRET` | Optional GitHub OAuth application credentials |
 
-For Node running on your computer, use your database's host address, normally `127.0.0.1`. The hostname `db` refers to the database service **inside the Compose network**. URL-encode special characters in connection-string credentials.
+Replace `YOUR_APP_PASSWORD` with the same password as `MYSQL_PASSWORD`. URL-encode special characters in the connection-string password. Use **`db`**, not `localhost`, as the database hostname inside the web container. The example environment file uses a host-based database URL, so replace it with the Compose URL above.
 
-### 3. Empty development database
+Keep `.env` private; it is ignored by Git and Docker builds. Docker Compose reads it at runtime.
+
+### 2. Build the image and start MySQL
 
 ```bash
-npx prisma generate
-npx prisma db push
+docker compose build
+docker compose up -d db
+docker compose logs -f db
 ```
 
-`db push` is a temporary local setup path: the current Prisma schema includes `Income`, but the historical category migration does not. Use this only with a new disposable database. It does not repair migration history or provide a production migration strategy. Do not accept data-loss prompts against an existing database.
+Wait for MySQL to finish initialization and report that it is ready for connections. Press Ctrl+C to stop following the logs; the database keeps running. Compose currently has no database health check, so starting the container alone does not guarantee MySQL is ready.
 
-Transactions require category rows matching the interface's IDs. Execute this SQL against your **new development database** using your MySQL client:
+If you need a session secret, generate one using Node inside the image:
 
-```sql
+```bash
+docker compose run --rm --no-deps web node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
+Copy the result into `NEXTAUTH_SECRET` in `.env` before starting the application.
+
+### 3. Initialize a new development database
+
+```bash
+docker compose run --rm web npx prisma generate
+docker compose run --rm web npx prisma db push
+```
+
+These are first-time steps for a **new, disposable database**. The Dockerfile does not generate the Prisma client or initialize the schema automatically.
+
+The current schema includes `Income`, but the historical category migration does not. `db push` is a temporary local setup path, not a production migration strategy. Do not accept data-loss prompts against an existing database.
+
+Populate the categories required by the interface. Run the following once against the new, empty category table, using a shell that supports heredocs (such as Bash or Zsh):
+
+```bash
+docker compose exec -T db sh -c 'MYSQL_PWD="$MYSQL_PASSWORD" exec mysql -u "$MYSQL_USER" "$MYSQL_DATABASE"' <<'SQL'
 INSERT INTO categories (category_id, name) VALUES
   (1, 'Food'),
   (2, 'Entertainment'),
@@ -83,21 +110,26 @@ INSERT INTO categories (category_id, name) VALUES
   (5, 'Other'),
   (6, 'Subscribtions'),
   (7, 'Income');
+SQL
 ```
 
-`Subscribtions` is the current database enum spelling. IDs must match `src/app/constants.tsx`. Run this once on an empty category table. Do not import the historical database dump: it contains user records rather than clean example data.
+Alternatively, execute that SQL through a MySQL client connected to the development database. `Subscribtions` is the current database enum spelling, and the IDs match `src/app/constants.tsx`.
 
-The existing `prisma/seed.ts` creates a fixed demo account and does **not** populate categories. This setup uses registration instead.
+The existing `prisma/seed.ts` creates a fixed demo account but does not populate categories. Use registration instead, and do not restore private database dumps as sample data.
 
-### 4. Start the application
+### 4. Start and register
 
 ```bash
-npm run dev -- --hostname 127.0.0.1
+docker compose up
 ```
 
-Open [registration](http://localhost:3000/auth/registration), create a fictional account with a unique disposable password, then open [login](http://localhost:3000/auth/login). If registration does not redirect automatically, visit login manually. Add a wallet before adding transactions.
+Open [registration](http://localhost:3000/auth/registration), create a fictional account with a unique disposable password, and visit [login](http://localhost:3000/auth/login). If registration does not redirect automatically, open login manually. Add a wallet before adding transactions.
 
-Password authentication is independent of OAuth. Google/GitHub buttons remain visible when their variables are empty, but those buttons need provider setup. The current login handler logs credentials: do not use a reused or real-account password, and remove that logging before inviting other users.
+Password login does not require OAuth. Google/GitHub buttons remain visible without configuration, but only work after provider setup. The current login handler logs credentials, so do not use a reused or real-account password.
+
+MySQL data persists in the `mysql_data` volume between runs. You do not need to initialize the database each time. Changing passwords in `.env` does not change users in an already initialized MySQL volume.
+
+These instructions were checked against the configuration; a clean image build and fresh-database setup were not executed during this documentation update.
 
 ## Optional OAuth setup
 
@@ -114,16 +146,12 @@ New developers need their own OAuth credentials only to test social login. For a
 
 The current email-based account-linking implementation needs security changes before accepting unrelated users. See [NextAuth OAuth documentation](https://next-auth.js.org/configuration/providers/oauth) for provider setup.
 
-## Docker status
+## Docker notes
 
-The Docker files provide a development web container and MySQL service, but are not a complete fresh-install or production workflow:
-
-- Compose requires private `MYSQL_ROOT_PASSWORD` and `MYSQL_PASSWORD` values in `.env`; the template contains empty placeholders.
-- Published ports are not restricted to loopback; restrict them for a PC-only demo and remove unused port `5555`.
-- Prisma generation, schema setup, and category initialization are not explicitly performed at startup.
+- The web container runs the Next.js development server with the source directory mounted for live updates.
+- The current configuration publishes web port `3000`, MySQL port `3306`, and unused port `5555`. Ports are not restricted to loopback; restrict them before using this on an untrusted network.
 - `.dockerignore` excludes private environment files, Git metadata, and database dumps.
-
-The host-based setup above makes these prerequisites explicit.
+- Use fictional data for demonstrations. This configuration is not ready for public hosting; see the [publication checklist](PUBLICATION_CHECKLIST.md).
 
 ## Project layout
 
@@ -137,17 +165,20 @@ prisma/seed.ts           Existing demo account seed
 public/                  Static icons and images
 ```
 
-## Development commands
+## Useful commands
 
 | Command | Purpose |
 | --- | --- |
-| `npm run dev -- --hostname 127.0.0.1` | Local development server |
-| `npm run build` | Create a production build |
-| `npm run start -- --hostname 127.0.0.1` | Serve an existing production build locally |
-| `npm run lint` | Run the configured lint command |
-| `npx prisma generate` | Regenerate the client after schema changes |
+| `docker compose build` | Build the web image |
+| `docker compose up` | Start the application and database with logs |
+| `docker compose up --build` | Build and start in one command |
+| `docker compose up -d` | Start in the background |
+| `docker compose logs -f web` | Follow application logs |
+| `docker compose down` | Stop and remove containers, keeping database volumes |
+| `docker compose run --rm web npx prisma generate` | Regenerate Prisma after schema changes |
+| `docker compose exec web npm run lint` | Run the configured lint command in a running web container |
 
-No automated test script is configured. A successful build is not a security check; `next.config.ts` currently skips ESLint checks during builds.
+Do not use `docker compose down -v` unless you intend to delete the development database volume. No automated test script is configured, and production builds currently skip ESLint checks.
 
 ## Known limitations
 
