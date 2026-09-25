@@ -59,9 +59,10 @@ const DeleteButton = ({wallet, handleDeleteSuccess} : DeleteButtonProps) => {
 
             <Dialog open={open} onOpenChange={setOpen}>
                     <DialogTrigger asChild>
-                        <Button variant="destructive" size="lg" className="flex items-center gap-2 cursor-pointer">
+                        {wallet && <Button variant="destructive" size="lg" className="flex items-center gap-2 cursor-pointer">
                             <Trash2 size={16} /> Delete Wallet
                         </Button>
+                        }
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-lg p-6 bg-white rounded-xl shadow-lg">
                         <form onSubmit={onSubmit}>

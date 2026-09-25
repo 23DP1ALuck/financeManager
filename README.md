@@ -98,24 +98,15 @@ These are first-time steps for a **new, disposable database**. The Dockerfile do
 
 The current schema includes `Income`, but the historical category migration does not. `db push` is a temporary local setup path, not a production migration strategy. Do not accept data-loss prompts against an existing database.
 
-Populate the categories required by the interface. Run the following once against the new, empty category table, using a shell that supports heredocs (such as Bash or Zsh):
+Create the fictional demo user, categories, wallets, and date-relative transactions:
 
 ```bash
-docker compose exec -T db sh -c 'MYSQL_PWD="$MYSQL_PASSWORD" exec mysql -u "$MYSQL_USER" "$MYSQL_DATABASE"' <<'SQL'
-INSERT INTO categories (category_id, name) VALUES
-  (1, 'Food'),
-  (2, 'Entertainment'),
-  (3, 'Transport'),
-  (4, 'Education'),
-  (5, 'Other'),
-  (6, 'Subscribtions'),
-  (7, 'Income');
-SQL
+docker compose run --rm web npx prisma db seed
 ```
 
-Alternatively, execute that SQL through a MySQL client connected to the development database. `Subscribtions` is the current database enum spelling, and the IDs match `src/app/constants.tsx`.
+The seed creates transactions in the current month and the previous three months, so charts and date filters remain useful whenever the demo is run. It is safe to rerun: only the `admin` demo user's wallets and transactions are replaced, while other users remain untouched.
 
-The existing `prisma/seed.ts` creates a fixed demo account but does not populate categories. Use registration instead, and do not restore private database dumps as sample data.
+Sign in with username `admin` (or `admin@example.com`) and password `admin`. These credentials and all seeded financial records are fictional and intended only for local demonstrations. Do not restore private database dumps as sample data.
 
 ### 4. Start and register
 

@@ -27,10 +27,14 @@ const AddWalletModal = ({onSuccess} : {onSuccess : OnSuccessProp}) => {
         const checkForPrimary = async () => {
             const wallets = await getWallets();
             const primaryWallet = wallets.find((wallet : Wallet) => wallet.isPrimary);
-            if (primaryWallet) setIsAlreadyPrimary(true);
+            if (primaryWallet) {
+                setIsAlreadyPrimary(true);
+            } else{
+                setIsAlreadyPrimary(false);
+            }
             return wallets;
         }
-        checkForPrimary();
+        checkForPrimary()
     },[open])
 
     const formSchema = z.object({

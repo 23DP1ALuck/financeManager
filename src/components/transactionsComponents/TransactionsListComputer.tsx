@@ -19,11 +19,12 @@ type TransactionsListComputerProps = {
 }
 const categoryImage : Record<number, ReactElement> = { // const for category images displaying
     1: <Food className={"size-4"}/>,
-    2: <Entertainment className={"size-4"}/>,
-    3: <Transport className={"size-4"}/>,
-    4: <Education className={"size-4"}/>,
-    5: <Other className={"size-4"}/>,
-    6: <Subscriptions className={"size-4"}/>
+    2: <Transport className={"size-4"}/>,
+    3: <Entertainment className={"size-4"}/>,
+    4: <Subscriptions className={"size-4"}/>,
+    5: <Education className={"size-4"}/>,
+    6: <Other className={"size-4"}/>,
+    7: <Other className={"size-4"}/>,
 }
 const TransactionsListComputer = ({transactionsDays, setIsSelected, isSelected, onSubmitAction, setShowToast} : TransactionsListComputerProps) => {
     const[onSubmit, setOnSubmit] = useState<boolean>(false); // submit state

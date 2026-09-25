@@ -18,10 +18,10 @@ export const sections : { section : string, sectionName : string, href : string}
 ]
 export const CATEGORIES : {category_id: number, name: string}[] = [
     {"category_id": 1, "name": "Food"},
-    {"category_id": 2, "name": "Entertainment"},
-    {"category_id": 3, "name": "Transport"},
-    {"category_id": 4, "name": "Education"},
-    {"category_id": 5, "name": "Other"},
-    {"category_id": 6, "name": "Subsctiptions"},
-    {"category_id": 7, "name": "Income"},
+    {"category_id": 2, "name": "Transport"},
+    {"category_id": 3, "name": "Entertainment"},
+    {"category_id": 4, "name": "Subscribtions"},
+    {"category_id": 5, "name": "Education"},
+    {"category_id": 6, "name": "Income"},
+    {"category_id": 7, "name": "Other"},
 ]

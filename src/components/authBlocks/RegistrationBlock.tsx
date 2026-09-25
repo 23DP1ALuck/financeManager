@@ -2,12 +2,11 @@
 import Google from "@/components/icons/Google";
 import OrBlock from "@/components/authBlocks/OrBlock";
 import Link from "next/link";
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {useRouter} from "next/navigation";
-import {signIn, useSession} from "next-auth/react";
+import {signIn} from "next-auth/react";
 import {AnimatePresence, motion} from "motion/react";
 import Github from "@/components/icons/Github";
-import {router} from "next/client";
 
 type RegistrationProps = {
     inputs : {
@@ -22,7 +21,7 @@ type RegistrationProps = {
 const  RegistrationBlock = ({inputs} : RegistrationProps) => {
     const [fieldErrors, setFieldErrors] = useState<{[key: string]: boolean}>({});
     const [errorMessage, setErrorMessageText] = useState<string | null>(null);
-
+    const router = useRouter();
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
